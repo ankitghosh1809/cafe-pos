@@ -1,65 +1,51 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import mysql.connector
+import psycopg2
+import psycopg2.extras
 import os
+from dotenv import load_dotenv
 from datetime import datetime, date, timedelta
 import random
 
+load_dotenv()
 app = Flask(__name__)
 CORS(app)
-
 TAX_RATE = 0.05
 
 def get_db():
-    return mysql.connector.connect(
-        host=os.getenv("DB_HOST", "localhost"),
-        port=int(os.getenv("DB_PORT", 3306)),
-        user=os.getenv("DB_USER", "root"),
-        password=os.getenv("DB_PASSWORD", ""),
-        database=os.getenv("DB_NAME", "cafe_db"),
-        autocommit=False
-    )
+    return psycopg2.connect(os.getenv("DATABASE_URL"))
 
 def query(sql, params=None, fetch=False):
     conn = get_db()
-    cur = conn.cursor(dictionary=True)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cur.execute(sql, params or ())
     if fetch:
-        result = cur.fetchall()
+        result = [dict(r) for r in cur.fetchall()]
     else:
         conn.commit()
-        result = cur.lastrowid
+        row = cur.fetchone()
+        result = list(row.values())[0] if row else cur.rowcount
     cur.close()
     conn.close()
     return result
-
-# ── menu endpoints ──────────────────────────────────────────────────────────────
 
 @app.get("/api/menu")
 def get_menu():
     cats = query("SELECT * FROM categories ORDER BY id", fetch=True)
     result = []
     for cat in cats:
-        items = query(
-            "SELECT * FROM menu_items WHERE category_id=%s ORDER BY name",
-            (cat["id"],), fetch=True
-        )
-        result.append({
-            "id": cat["id"],
-            "name": cat["name"],
-            "icon": cat.get("icon", ""),
-            "items": items,
-        })
+        items = query("SELECT * FROM menu_items WHERE category_id=%s ORDER BY name", (cat["id"],), fetch=True)
+        result.append({"id": cat["id"], "name": cat["name"], "icon": cat.get("icon",""), "items": items})
     return jsonify(result)
 
 @app.post("/api/menu/items")
 def add_menu_item():
     data = request.json
-    if not {"category_id", "name", "price"}.issubset(data):
+    if not {"category_id","name","price"}.issubset(data):
         return jsonify({"error": "Missing fields"}), 400
     item_id = query(
-        "INSERT INTO menu_items(category_id,name,description,price,available) VALUES(%s,%s,%s,%s,%s)",
-        (data["category_id"], data["name"], data.get("description",""), data["price"], data.get("available",1))
+        "INSERT INTO menu_items(category_id,name,description,price,available) VALUES(%s,%s,%s,%s,%s) RETURNING id",
+        (data["category_id"],data["name"],data.get("description",""),data["price"],data.get("available",1))
     )
     item = query("SELECT * FROM menu_items WHERE id=%s", (item_id,), fetch=True)
     return jsonify(item[0]), 201
@@ -80,8 +66,6 @@ def delete_menu_item(item_id):
     query("DELETE FROM menu_items WHERE id=%s", (item_id,))
     return jsonify({"deleted": item_id})
 
-# ── order endpoints ─────────────────────────────────────────────────────────────
-
 def _calc_totals(items, discount=0.0):
     subtotal = sum(i["quantity"] * i["unit_price"] for i in items)
     tax = round(subtotal * TAX_RATE, 2)
@@ -96,16 +80,16 @@ def create_order():
         return jsonify({"error": "Order must have at least one item"}), 400
     discount = float(data.get("discount", 0))
     subtotal, tax, total = _calc_totals(items, discount)
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.now()
     order_id = query(
-        "INSERT INTO orders(table_no,customer,status,subtotal,tax,discount,total,created_at,notes) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-        (data.get("table_no"), data.get("customer"), "open", subtotal, tax, discount, total, now, data.get("notes"))
+        "INSERT INTO orders(table_no,customer,status,subtotal,tax,discount,total,created_at,notes) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id",
+        (data.get("table_no"),data.get("customer"),"open",subtotal,tax,discount,total,now,data.get("notes"))
     )
     for it in items:
         lt = round(it["quantity"] * it["unit_price"], 2)
         query(
-            "INSERT INTO order_items(order_id,item_id,quantity,unit_price,line_total) VALUES(%s,%s,%s,%s,%s)",
-            (order_id, it["item_id"], it["quantity"], it["unit_price"], lt)
+            "INSERT INTO order_items(order_id,item_id,quantity,unit_price,line_total) VALUES(%s,%s,%s,%s,%s) RETURNING id",
+            (order_id,it["item_id"],it["quantity"],it["unit_price"],lt)
         )
     return jsonify(_fetch_order(order_id)), 201
 
@@ -140,16 +124,14 @@ def _fetch_order(order_id):
 @app.patch("/api/orders/<int:order_id>/status")
 def update_order_status(order_id):
     status = request.json.get("status")
-    valid = {"open", "billed", "paid", "cancelled"}
+    valid = {"open","billed","paid","cancelled"}
     if status not in valid:
         return jsonify({"error": f"Status must be one of {valid}"}), 400
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.now()
     billed_at = now if status == "billed" else None
     paid_at = now if status == "paid" else None
-    query(
-        "UPDATE orders SET status=%s, billed_at=COALESCE(%s,billed_at), paid_at=COALESCE(%s,paid_at) WHERE id=%s",
-        (status, billed_at, paid_at, order_id)
-    )
+    query("UPDATE orders SET status=%s, billed_at=COALESCE(%s,billed_at), paid_at=COALESCE(%s,paid_at) WHERE id=%s",
+          (status, billed_at, paid_at, order_id))
     return jsonify(_fetch_order(order_id))
 
 @app.get("/api/orders/<int:order_id>/receipt")
@@ -165,12 +147,9 @@ def get_receipt(order_id):
         "total": order["total"], "status": order["status"],
         "created_at": str(order["created_at"]),
         "printed_at": datetime.now().isoformat(),
-        "cafe_name": "Brew & Co.",
-        "address": "12 Bean Street, Coffee Quarter",
+        "cafe_name": "Brew & Co.", "address": "12 Bean Street, Coffee Quarter",
         "thank_you": "Thank you for visiting Brew & Co.! See you soon",
     }})
-
-# ── reporting endpoints ─────────────────────────────────────────────────────────
 
 @app.get("/api/reports/sales")
 def sales_report():
@@ -181,13 +160,12 @@ def sales_report():
         since = (date.today() - timedelta(days=7)).isoformat()
     else:
         since = (date.today() - timedelta(days=30)).isoformat()
-
     rows = query(
         "SELECT COUNT(*) AS order_count, COALESCE(SUM(total),0) AS revenue, COALESCE(SUM(subtotal),0) AS subtotal, COALESCE(SUM(tax),0) AS tax_collected, COALESCE(AVG(total),0) AS avg_order FROM orders WHERE status='paid' AND DATE(created_at) >= %s",
         (since,), fetch=True
     )
     top_items = query(
-        "SELECT mi.name, SUM(oi.quantity) AS qty, SUM(oi.line_total) AS revenue FROM order_items oi JOIN menu_items mi ON mi.id=oi.item_id JOIN orders o ON o.id=oi.order_id WHERE o.status='paid' AND DATE(o.created_at) >= %s GROUP BY mi.id ORDER BY qty DESC LIMIT 5",
+        "SELECT mi.name, SUM(oi.quantity) AS qty, SUM(oi.line_total) AS revenue FROM order_items oi JOIN menu_items mi ON mi.id=oi.item_id JOIN orders o ON o.id=oi.order_id WHERE o.status='paid' AND DATE(o.created_at) >= %s GROUP BY mi.id, mi.name ORDER BY qty DESC LIMIT 5",
         (since,), fetch=True
     )
     daily = query(
