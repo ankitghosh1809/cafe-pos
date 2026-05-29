@@ -147,3 +147,6 @@ Built as a portfolio project demonstrating:
 - Single-page frontend architecture (no framework)
 - Real-time bill calculation and receipt generation
 - Business analytics via aggregated SQL reporting
+
+## 🌐 Live Demo
+[https://cafe-pos-lake.vercel.app](https://cafe-pos-lake.vercel.app)
