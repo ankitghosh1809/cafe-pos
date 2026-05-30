@@ -16,7 +16,13 @@ CORS(app)
 TAX_RATE = 0.05
 
 def get_db():
-    return psycopg2.connect(os.getenv("DATABASE_URL"))
+    db_url = os.getenv("DATABASE_URL")
+    if not db_url:
+        raise RuntimeError(
+            "DATABASE_URL environment variable is not set. "
+            "Add it in Vercel → Settings → Environment Variables."
+        )
+    return psycopg2.connect(db_url)
 
 def query(sql, params=None, fetch=False):
     conn = get_db()
