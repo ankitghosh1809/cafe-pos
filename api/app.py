@@ -196,6 +196,14 @@ except Exception as e:
     print(f"[startup] init_db skipped: {e}")
 
 
+@app.errorhandler(Exception)
+def handle_uncaught_error(e):
+    code = getattr(e, "code", 500)
+    if not isinstance(code, int):
+        code = 500
+    return jsonify({"error": str(e)}), code
+
+
 @app.get("/api/menu")
 def get_menu():
     cats = query("SELECT * FROM categories ORDER BY id", fetch=True)
@@ -212,7 +220,7 @@ def add_menu_item():
         return jsonify({"error": "Missing fields"}), 400
     item_id = query(
         "INSERT INTO menu_items(category_id,name,description,price,available) VALUES(%s,%s,%s,%s,%s) RETURNING id",
-        (data["category_id"],data["name"],data.get("description",""),data["price"],data.get("available",1))
+        (data["category_id"],data["name"],data.get("description",""),data["price"],int(bool(data.get("available",1))))
     )
     item = query("SELECT * FROM menu_items WHERE id=%s", (item_id,), fetch=True)
     return jsonify(item[0]), 201
@@ -223,6 +231,8 @@ def update_menu_item(item_id):
     fields = {k: data[k] for k in ("name","description","price","available") if k in data}
     if not fields:
         return jsonify({"error": "Nothing to update"}), 400
+    if "available" in fields:
+        fields["available"] = int(bool(fields["available"]))
     set_clause = ", ".join(f"{k}=%s" for k in fields)
     query(f"UPDATE menu_items SET {set_clause} WHERE id=%s RETURNING id", (*fields.values(), item_id))
     item = query("SELECT * FROM menu_items WHERE id=%s", (item_id,), fetch=True)
