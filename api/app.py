@@ -5,10 +5,23 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import psycopg2
 import psycopg2.extras
+import psycopg2.extensions
 import os
 from dotenv import load_dotenv
 from datetime import datetime, date, timedelta
 import random
+
+# Postgres NUMERIC columns (price, subtotal, tax, total, ...) come back from
+# psycopg2 as decimal.Decimal by default. Flask's JSON encoder then renders
+# those as *strings* (e.g. "3.50") to avoid float rounding in transit, which
+# silently breaks arithmetic wherever a value read from the API flows back
+# into a calculation (e.g. unit_price in a new order). Casting NUMERIC -> float
+# at the driver level keeps every money field a real JSON number end-to-end.
+DEC2FLOAT = psycopg2.extensions.new_type(
+    psycopg2.extensions.DECIMAL.values, "DEC2FLOAT",
+    lambda value, curs: float(value) if value is not None else None,
+)
+psycopg2.extensions.register_type(DEC2FLOAT)
 
 load_dotenv()
 app = Flask(__name__)
@@ -221,7 +234,7 @@ def delete_menu_item(item_id):
     return jsonify({"deleted": item_id})
 
 def _calc_totals(items, discount=0.0):
-    subtotal = sum(i["quantity"] * i["unit_price"] for i in items)
+    subtotal = sum(int(i["quantity"]) * float(i["unit_price"]) for i in items)
     tax = round(subtotal * TAX_RATE, 2)
     total = round(subtotal + tax - discount, 2)
     return round(subtotal, 2), tax, total
@@ -240,10 +253,11 @@ def create_order():
         (data.get("table_no"),data.get("customer"),"open",subtotal,tax,discount,total,now,data.get("notes"))
     )
     for it in items:
-        lt = round(it["quantity"] * it["unit_price"], 2)
+        qty, price = int(it["quantity"]), float(it["unit_price"])
+        lt = round(qty * price, 2)
         query(
             "INSERT INTO order_items(order_id,item_id,quantity,unit_price,line_total) VALUES(%s,%s,%s,%s,%s) RETURNING id",
-            (order_id,it["item_id"],it["quantity"],it["unit_price"],lt)
+            (order_id,it["item_id"],qty,price,lt)
         )
     return jsonify(_fetch_order(order_id)), 201
 
