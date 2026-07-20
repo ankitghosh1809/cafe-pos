@@ -38,6 +38,151 @@ def query(sql, params=None, fetch=False):
     conn.close()
     return result
 
+# ── schema + seed (Postgres) ─────────────────────────────────────────────────
+# Creates tables on first run and seeds demo menu/order data if the DB is
+# empty. Safe on every cold start: CREATE TABLE IF NOT EXISTS is a no-op once
+# the schema exists, and seeding only runs when categories is empty.
+
+def init_db():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS categories (
+            id   SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL UNIQUE,
+            icon VARCHAR(10) NOT NULL DEFAULT '☕'
+        );
+
+        CREATE TABLE IF NOT EXISTS menu_items (
+            id          SERIAL PRIMARY KEY,
+            category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
+            name        VARCHAR(200) NOT NULL,
+            description TEXT,
+            price       NUMERIC(10,2) NOT NULL CHECK (price >= 0),
+            available   SMALLINT NOT NULL DEFAULT 1,
+            created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_menu_category ON menu_items(category_id);
+
+        CREATE TABLE IF NOT EXISTS orders (
+            id         SERIAL PRIMARY KEY,
+            table_no   VARCHAR(20),
+            customer   VARCHAR(150),
+            status     VARCHAR(20) NOT NULL DEFAULT 'open'
+                       CHECK (status IN ('open','billed','paid','cancelled')),
+            subtotal   NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+            tax        NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+            discount   NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+            total      NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+            notes      TEXT,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            billed_at  TIMESTAMP,
+            paid_at    TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+        CREATE INDEX IF NOT EXISTS idx_orders_date ON orders((created_at::date));
+
+        CREATE TABLE IF NOT EXISTS order_items (
+            id         SERIAL PRIMARY KEY,
+            order_id   INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+            item_id    INTEGER NOT NULL REFERENCES menu_items(id) ON DELETE RESTRICT,
+            quantity   INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
+            unit_price NUMERIC(10,2) NOT NULL,
+            line_total NUMERIC(10,2) NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_oi_order ON order_items(order_id);
+    """)
+    conn.commit()
+
+    cur.execute("SELECT COUNT(*) FROM categories")
+    if cur.fetchone()[0] == 0:
+        _seed(cur)
+        conn.commit()
+
+    cur.close()
+    conn.close()
+
+
+def _seed(cur):
+    cats = [
+        ("Hot Beverages", "☕"),
+        ("Cold Beverages", "🧋"),
+        ("Snacks", "🥐"),
+        ("Meals", "🍽️"),
+        ("Desserts", "🍰"),
+    ]
+    cat_ids = []
+    for name, icon in cats:
+        cur.execute("INSERT INTO categories(name,icon) VALUES(%s,%s) RETURNING id", (name, icon))
+        cat_ids.append(cur.fetchone()[0])
+
+    items = [
+        (0, "Espresso", "Rich single-shot espresso", 2.50),
+        (0, "Cappuccino", "Espresso with steamed milk foam", 3.50),
+        (0, "Flat White", "Double ristretto with velvety micro-foam", 4.00),
+        (0, "Chai Latte", "Spiced tea with steamed milk", 3.75),
+        (1, "Cold Brew", "12-hour slow-extracted cold brew", 4.50),
+        (1, "Iced Caramel Latte", "Espresso, milk, caramel over ice", 4.75),
+        (1, "Mango Smoothie", "Fresh mango blended with yogurt", 4.25),
+        (1, "Sparkling Lemonade", "House-made with fresh zest", 3.25),
+        (2, "Butter Croissant", "Flaky, all-butter French croissant", 2.75),
+        (2, "Avocado Toast", "Smashed avo on sourdough with sea salt", 6.50),
+        (2, "Club Sandwich", "Triple-decker with chicken & bacon", 7.00),
+        (2, "Cheese Scone", "Warm cheddar scone with butter", 2.25),
+        (3, "Eggs Benedict", "Poached eggs, ham, hollandaise on muffin", 9.50),
+        (3, "Granola Bowl", "House granola, Greek yogurt, seasonal fruit", 7.00),
+        (3, "Pasta Primavera", "Penne with garden vegetables, olive oil", 10.50),
+        (4, "Tiramisu", "Classic Italian layered dessert", 5.50),
+        (4, "Chocolate Brownie", "Fudgy brownie, served warm with cream", 4.00),
+        (4, "Cheesecake Slice", "New York-style, berry compote", 5.00),
+    ]
+    item_rows = []
+    for cat_idx, name, desc, price in items:
+        cur.execute(
+            "INSERT INTO menu_items(category_id,name,description,price) VALUES(%s,%s,%s,%s) RETURNING id",
+            (cat_ids[cat_idx], name, desc, price),
+        )
+        item_rows.append((cur.fetchone()[0], price))
+
+    # 30 days of demo order history so Reports/History aren't empty on first run
+    today = date.today()
+    for d in range(30, 0, -1):
+        day = today - timedelta(days=d)
+        for _ in range(random.randint(15, 35)):
+            ts = datetime.combine(day, datetime.min.time()).replace(
+                hour=random.randint(8, 20), minute=random.randint(0, 59)
+            )
+            table_no = f"T{random.randint(1, 12)}"
+            cur.execute(
+                "INSERT INTO orders(table_no,status,created_at,billed_at,paid_at,subtotal,tax,total) "
+                "VALUES(%s,'paid',%s,%s,%s,0,0,0) RETURNING id",
+                (table_no, ts, ts, ts),
+            )
+            order_id = cur.fetchone()[0]
+            chosen = random.sample(item_rows, min(random.randint(1, 5), len(item_rows)))
+            subtotal = 0.0
+            for item_id, price in chosen:
+                qty = random.randint(1, 3)
+                lt = round(price * qty, 2)
+                subtotal += lt
+                cur.execute(
+                    "INSERT INTO order_items(order_id,item_id,quantity,unit_price,line_total) VALUES(%s,%s,%s,%s,%s)",
+                    (order_id, item_id, qty, price, lt),
+                )
+            tax = round(subtotal * TAX_RATE, 2)
+            total = round(subtotal + tax, 2)
+            cur.execute(
+                "UPDATE orders SET subtotal=%s, tax=%s, total=%s WHERE id=%s",
+                (round(subtotal, 2), tax, total, order_id),
+            )
+
+
+try:
+    init_db()
+except Exception as e:
+    print(f"[startup] init_db skipped: {e}")
+
+
 @app.get("/api/menu")
 def get_menu():
     cats = query("SELECT * FROM categories ORDER BY id", fetch=True)
