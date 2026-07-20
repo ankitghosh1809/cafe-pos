@@ -224,13 +224,13 @@ def update_menu_item(item_id):
     if not fields:
         return jsonify({"error": "Nothing to update"}), 400
     set_clause = ", ".join(f"{k}=%s" for k in fields)
-    query(f"UPDATE menu_items SET {set_clause} WHERE id=%s", (*fields.values(), item_id))
+    query(f"UPDATE menu_items SET {set_clause} WHERE id=%s RETURNING id", (*fields.values(), item_id))
     item = query("SELECT * FROM menu_items WHERE id=%s", (item_id,), fetch=True)
     return jsonify(item[0])
 
 @app.delete("/api/menu/items/<int:item_id>")
 def delete_menu_item(item_id):
-    query("DELETE FROM menu_items WHERE id=%s", (item_id,))
+    query("DELETE FROM menu_items WHERE id=%s RETURNING id", (item_id,))
     return jsonify({"deleted": item_id})
 
 def _calc_totals(items, discount=0.0):
@@ -298,7 +298,7 @@ def update_order_status(order_id):
     now = datetime.now()
     billed_at = now if status == "billed" else None
     paid_at = now if status == "paid" else None
-    query("UPDATE orders SET status=%s, billed_at=COALESCE(%s,billed_at), paid_at=COALESCE(%s,paid_at) WHERE id=%s",
+    query("UPDATE orders SET status=%s, billed_at=COALESCE(%s,billed_at), paid_at=COALESCE(%s,paid_at) WHERE id=%s RETURNING id",
           (status, billed_at, paid_at, order_id))
     return jsonify(_fetch_order(order_id))
 
