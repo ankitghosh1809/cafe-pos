@@ -6,10 +6,9 @@ __pycache__/
 *.pyd
 .Python
 
-# Database (don't commit generated data)
-backend/cafe.db
-backend/*.db-wal
-backend/*.db-shm
+# Environment / secrets (contains DATABASE_URL)
+.env
+.env.local
 
 # OS
 .DS_Store

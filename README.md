@@ -1,5 +1,5 @@
 # ☕ Brew & Co. — Cafe Management System
-**Python · Flask · SQLite · Vanilla JS**
+**Python · Flask · PostgreSQL · Vanilla JS**
 
 A full-stack POS (Point-of-Sale) system built for small to mid-sized cafes. Handles everything from order-taking and billing to automated receipts and sales analytics — no third-party services required.
 
@@ -38,9 +38,9 @@ A full-stack POS (Point-of-Sale) system built for small to mid-sized cafes. Hand
 
 | Layer    | Technology                  |
 |----------|-----------------------------|
-| Backend  | Python 3.11+, Flask 3, SQLite |
+| Backend  | Python 3.11+, Flask 3, PostgreSQL |
 | Frontend | HTML5, CSS3 (custom), Vanilla JS (ES2020) |
-| Database | SQLite via Python `sqlite3`  |
+| Database | PostgreSQL via `psycopg2` (Neon in production) |
 | Fonts    | Playfair Display + DM Sans (Google Fonts) |
 
 ---
@@ -48,16 +48,23 @@ A full-stack POS (Point-of-Sale) system built for small to mid-sized cafes. Hand
 ## Project Structure
 
 ```
-cafe_pos/
+cafe-pos/
+├── api/
+│   ├── index.py          # Vercel serverless entry point
+│   └── app.py            # Flask app — all routes (deployed copy)
 ├── backend/
-│   ├── app.py            # Flask app — all routes
-│   ├── requirements.txt
-│   └── cafe.db           # auto-created on first run
+│   ├── app.py             # same Flask app, for local dev
+│   └── requirements.txt
 ├── frontend/
 │   └── index.html        # single-file SPA
-├── schema.sql            # standalone DB schema reference
+├── requirements.txt       # used by Vercel's build (mirrors backend/requirements.txt)
+├── vercel.json            # routes /api/** to api/index.py, everything else to frontend/
+├── schema.sql             # standalone DB schema reference (app also self-creates this)
+├── .env.example           # copy to .env locally with your DATABASE_URL
 └── README.md
 ```
+
+`api/` and `backend/` currently hold identical copies of `app.py` — `api/` is what Vercel deploys, `backend/` is what you run locally. Edit one, then copy your changes into the other before committing.
 
 ---
 
@@ -77,11 +84,12 @@ cd backend
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+cp ../.env.example .env         # then edit .env with your Postgres DATABASE_URL
 python app.py
 ```
 
-The server starts at **http://localhost:5000**.  
-`cafe.db` is created automatically with seed data on the first run.
+The server starts at **http://localhost:5000**.
+Tables and the 18-item demo menu (plus 30 days of sample orders) are created automatically against whatever database `DATABASE_URL` points to, the first time you run it.
 
 ### 3. Frontend
 
@@ -125,7 +133,7 @@ orders       (id, table_no, customer, status, subtotal, tax, discount, total, ..
 order_items  (id, order_id, item_id, quantity, unit_price, line_total)
 ```
 
-Foreign key constraints and a WAL journal are enabled by default.
+Foreign key constraints are enforced by Postgres (`ON DELETE CASCADE` for order line items, `ON DELETE RESTRICT` for categories/menu items so historical orders can't be orphaned).
 
 ---
 
