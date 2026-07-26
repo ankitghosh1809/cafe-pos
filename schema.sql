@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS menu_items (
     description TEXT,
     price       NUMERIC(10,2)  NOT NULL CHECK (price >= 0),
     available   SMALLINT       NOT NULL DEFAULT 1,
+    image_key   VARCHAR(40)    NOT NULL DEFAULT 'default',
     created_at  TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -38,19 +39,21 @@ CREATE INDEX IF NOT EXISTS idx_menu_category ON menu_items(category_id);
 --  3. Orders
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS orders (
-    id         SERIAL        PRIMARY KEY,
-    table_no   VARCHAR(20),
-    customer   VARCHAR(150),
-    status     VARCHAR(20)   NOT NULL DEFAULT 'open'
-               CHECK (status IN ('open', 'billed', 'paid', 'cancelled')),
-    subtotal   NUMERIC(10,2) NOT NULL DEFAULT 0.00,
-    tax        NUMERIC(10,2) NOT NULL DEFAULT 0.00,
-    discount   NUMERIC(10,2) NOT NULL DEFAULT 0.00,
-    total      NUMERIC(10,2) NOT NULL DEFAULT 0.00,
-    notes      TEXT,
-    created_at TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    billed_at  TIMESTAMP     NULL DEFAULT NULL,
-    paid_at    TIMESTAMP     NULL DEFAULT NULL
+    id             SERIAL        PRIMARY KEY,
+    table_no       VARCHAR(20),
+    customer       VARCHAR(150),
+    status         VARCHAR(20)   NOT NULL DEFAULT 'open'
+                   CHECK (status IN ('open', 'billed', 'paid', 'cancelled')),
+    subtotal       NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+    tax            NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+    discount       NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+    total          NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+    payment_method VARCHAR(20),
+    placed_by      VARCHAR(10)   NOT NULL DEFAULT 'customer',
+    notes          TEXT,
+    created_at     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    billed_at      TIMESTAMP     NULL DEFAULT NULL,
+    paid_at        TIMESTAMP     NULL DEFAULT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
