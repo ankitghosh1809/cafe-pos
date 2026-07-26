@@ -329,7 +329,7 @@
       to   { opacity: 1; transform: translateX(0); }
     }
 
-    .oi-name { font-size: .88rem; font-weight: 500; grid-column: 1; }
+    .oi-name { font-size: .88rem; font-weight: 500; grid-column: 1; display: flex; align-items: center; gap: 7px; }
     .oi-price {
       font-size: .88rem;
       font-weight: 600;
@@ -716,28 +716,581 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ══════════════════════════════════════════════════
+       PORTAL LANDING
+    ══════════════════════════════════════════════════ */
+    .portal-screen {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 900px 500px at 50% -10%, rgba(232,164,74,.16), transparent 60%),
+        var(--espresso);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      gap: 40px;
+    }
+    .portal-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      color: var(--cream);
+      letter-spacing: .02em;
+      text-align: center;
+    }
+    .portal-logo span { color: var(--amber); }
+    .portal-tag {
+      font-size: .85rem;
+      color: rgba(245,237,227,.55);
+      text-align: center;
+      margin-top: -28px;
+      letter-spacing: .04em;
+    }
+    .portal-cards {
+      display: flex;
+      gap: 22px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .portal-card {
+      width: 240px;
+      background: var(--foam);
+      border-radius: var(--r-lg);
+      padding: 30px 26px;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      text-align: left;
+      box-shadow: var(--shadow-m);
+    }
+    .portal-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-l); border-color: var(--amber); }
+    .portal-card-icon {
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      background: rgba(232,164,74,.16);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+    .portal-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--roast);
+      margin-bottom: 6px;
+    }
+    .portal-card-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+    .portal-card-cta {
+      margin-top: 16px;
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--amber);
+      letter-spacing: .03em;
+    }
+
+    /* owner login card */
+    .login-card {
+      width: 340px;
+      background: var(--foam);
+      border-radius: var(--r-lg);
+      padding: 34px 30px;
+      box-shadow: var(--shadow-l);
+    }
+    .login-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--roast);
+      margin-bottom: 4px;
+    }
+    .login-card-sub { font-size: .8rem; color: var(--muted); margin-bottom: 22px; }
+    .login-input {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: .9rem;
+      outline: none;
+      margin-bottom: 12px;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .login-input:focus { border-color: var(--latte); box-shadow: 0 0 0 3px rgba(200,149,106,.15); }
+    .login-error {
+      font-size: .78rem;
+      color: var(--blush);
+      background: rgba(212,112,106,.1);
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .login-error.show { display: block; }
+    .login-back {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: .78rem;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .login-back:hover { color: var(--roast); }
+
+    /* exit-to-landing link shown inside customer/owner topbars */
+    .portal-exit {
+      font-size: .74rem;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+    .portal-exit:hover { background: rgba(255,255,255,.07); color: var(--cream); }
+    .owner-chip {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--espresso);
+      background: var(--amber);
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    /* ── table select (was free-text input) ───────────── */
+    select.table-input {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a7060' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 9px center;
+      padding-right: 24px;
+      width: auto;
+      cursor: pointer;
+    }
+
+    /* ── menu item icon ───────────────────────────────── */
+    .menu-card-icon { width: 40px; height: 40px; margin-bottom: 10px; }
+    .menu-card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+    .oi-icon { width: 26px; height: 26px; flex-shrink: 0; }
+    .oi-name-row { display: flex; align-items: center; gap: 8px; }
+
+    /* ══════════════════════════════════════════════════
+       PAYMENT PICKER (merged bill + pay)
+    ══════════════════════════════════════════════════ */
+    .pay-methods {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .pay-method-btn {
+      padding: 10px 6px;
+      border-radius: var(--r);
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      font-family: inherit;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: center;
+    }
+    .pay-method-btn .pm-icon { display: block; font-size: 1.15rem; margin-bottom: 3px; }
+    .pay-method-btn.active { background: var(--roast); color: var(--cream); border-color: var(--roast); }
+    .pay-method-btn:hover:not(.active) { border-color: var(--latte); }
+    .confirm-pay-btn { width: 100%; }
+
+    /* ══════════════════════════════════════════════════
+       HISTORY: toolbar (sort + calendar)
+    ══════════════════════════════════════════════════ */
+    .history-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .sort-select, .date-pick-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: white;
+      font-family: inherit;
+      font-size: .8rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text);
+    }
+    .date-pick-btn { position: relative; display: flex; align-items: center; gap: 6px; }
+    .date-pick-btn.has-filter { border-color: var(--amber); background: rgba(232,164,74,.1); }
+    .date-clear-x {
+      margin-left: 2px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .date-clear-x:hover { color: var(--blush); }
+
+    .calendar-pop {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: white;
+      border-radius: var(--r);
+      box-shadow: var(--shadow-l);
+      border: 1px solid var(--border);
+      padding: 14px;
+      width: 260px;
+      z-index: 50;
+      display: none;
+    }
+    .calendar-pop.open { display: block; }
+    .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .cal-title { font-size: .85rem; font-weight: 600; color: var(--roast); }
+    .cal-nav {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--cream);
+      cursor: pointer;
+      font-size: .8rem;
+    }
+    .cal-nav:hover { background: var(--latte); color: white; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .cal-dow { font-size: .62rem; color: var(--muted); text-align: center; padding-bottom: 4px; font-weight: 600; }
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      font-size: .76rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text);
+    }
+    .cal-day:hover:not(:disabled) { background: var(--cream); }
+    .cal-day.today { font-weight: 700; color: var(--amber); }
+    .cal-day.selected { background: var(--roast); color: var(--cream); }
+    .cal-day:disabled { color: var(--border); cursor: not-allowed; }
+    .cal-day.empty { visibility: hidden; }
+
+    .history-del-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: .8rem; padding: 5px;
+      transition: color .15s;
+    }
+    .history-del-btn:hover { color: var(--blush); }
+    .history-row-actions { display: flex; gap: 6px; align-items: center; }
+
+    /* ══════════════════════════════════════════════════
+       OWNER: MENU MANAGEMENT
+    ══════════════════════════════════════════════════ */
+    .mgmt-toolbar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+    .mgmt-table-wrap {
+      background: white; border-radius: var(--r); border: 1px solid var(--border); overflow: hidden;
+    }
+    .mgmt-row {
+      display: grid;
+      grid-template-columns: 40px 1fr 110px 90px 80px 90px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: .82rem;
+    }
+    .mgmt-row.head { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    .mgmt-row:last-child { border-bottom: none; }
+    .mgmt-icon { width: 28px; height: 28px; }
+    .mgmt-name-cell input, .mgmt-price-cell input {
+      width: 100%; border: 1px solid transparent; border-radius: 6px; padding: 5px 7px;
+      font-family: inherit; font-size: .82rem; background: transparent;
+    }
+    .mgmt-name-cell input:focus, .mgmt-price-cell input:focus { border-color: var(--latte); background: white; }
+    .avail-toggle {
+      width: 36px; height: 20px; border-radius: 999px; border: none; cursor: pointer;
+      background: var(--border); position: relative; transition: background .15s;
+    }
+    .avail-toggle.on { background: var(--sage); }
+    .avail-toggle::after {
+      content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+      background: white; border-radius: 50%; transition: left .15s;
+    }
+    .avail-toggle.on::after { left: 18px; }
+    .mgmt-actions { display: flex; gap: 6px; }
+    .mgmt-icon-btn {
+      background: none; border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+      width: 28px; height: 28px; font-size: .8rem; color: var(--muted);
+    }
+    .mgmt-icon-btn:hover { border-color: var(--latte); color: var(--roast); }
+    .mgmt-icon-btn.danger:hover { border-color: var(--blush); color: var(--blush); }
+
+    .add-item-form {
+      background: white; border: 1px solid var(--border); border-radius: var(--r);
+      padding: 18px; margin-bottom: 16px; display: none;
+    }
+    .add-item-form.open { display: block; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-field label { font-size: .72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; display: block; margin-bottom: 5px; }
+    .form-field input, .form-field select {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 10px;
+      font-family: inherit; font-size: .85rem; outline: none;
+    }
+    .form-field input:focus, .form-field select:focus { border-color: var(--latte); }
+    .icon-pick-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; max-height: 130px; overflow-y: auto; padding: 8px; border: 1.5px solid var(--border); border-radius: 8px; }
+    .icon-pick-opt { width: 30px; height: 30px; border-radius: 6px; cursor: pointer; border: 1.5px solid transparent; padding: 2px; }
+    .icon-pick-opt.selected { border-color: var(--amber); background: rgba(232,164,74,.15); }
   </style>
 </head>
 <body>
 
+<!-- menu-item icon sprite (defined once, referenced via <use>) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><symbol id="icon-espresso" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M25 20 q-2-5 0-8 M32 20 q-2-5 0-8 M39 20 q-2-5 0-8" stroke="#8a7060" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/>
+    <path d="M18 28h28l-2.5 20a6 6 0 0 1-6 5.2H26.5a6 6 0 0 1-6-5.2Z" fill="#f5ede3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M19.3 32h25.4l-1 6H20.3Z" fill="#1a0f0a"/>
+    
+    <ellipse cx="32" cy="32" rx="6.5" ry="1.8" fill="#e8a44a" opacity=".55"/>
+    </symbol><symbol id="icon-cappuccino" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M25 20 q-2-5 0-8 M32 20 q-2-5 0-8 M39 20 q-2-5 0-8" stroke="#8a7060" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/>
+    <path d="M18 28h28l-2.5 20a6 6 0 0 1-6 5.2H26.5a6 6 0 0 1-6-5.2Z" fill="#f5ede3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M19.3 32h25.4l-1 6H20.3Z" fill="#c8956a"/>
+    <path d="M44 30 q10 0 10 8 t-10 8" fill="none" stroke="#3b1f12" stroke-width="3" stroke-linecap="round"/>
+    
+    <ellipse cx="32" cy="32" rx="12.5" ry="3.6" fill="#fdf8f3"/>
+    <path d="M26 31.6c1.6-1.6 3-1.6 4.4 0s3 1.6 4.4 0 3-1.6 4.4 0" stroke="#e8a44a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+
+    </symbol><symbol id="icon-chai" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M25 20 q-2-5 0-8 M32 20 q-2-5 0-8 M39 20 q-2-5 0-8" stroke="#8a7060" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/>
+    <path d="M18 28h28l-2.5 20a6 6 0 0 1-6 5.2H26.5a6 6 0 0 1-6-5.2Z" fill="#f5ede3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M19.3 32h25.4l-1 6H20.3Z" fill="#a56a3a"/>
+    <path d="M44 30 q10 0 10 8 t-10 8" fill="none" stroke="#3b1f12" stroke-width="3" stroke-linecap="round"/>
+    
+    <circle cx="24" cy="34" r="1.6" fill="#e8a44a"/><circle cx="30" cy="36" r="1.4" fill="#e8a44a"/><circle cx="37" cy="34" r="1.5" fill="#e8a44a"/>
+
+    </symbol><symbol id="icon-hot-chocolate" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M25 20 q-2-5 0-8 M32 20 q-2-5 0-8 M39 20 q-2-5 0-8" stroke="#8a7060" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/>
+    <path d="M18 28h28l-2.5 20a6 6 0 0 1-6 5.2H26.5a6 6 0 0 1-6-5.2Z" fill="#f5ede3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M19.3 32h25.4l-1 6H20.3Z" fill="#5a3420"/>
+    <path d="M44 30 q10 0 10 8 t-10 8" fill="none" stroke="#3b1f12" stroke-width="3" stroke-linecap="round"/>
+    
+    <ellipse cx="32" cy="32.5" rx="12.5" ry="3.4" fill="#fdf8f3"/>
+    <circle cx="27" cy="31" r="2.6" fill="#fdf8f3"/><circle cx="33" cy="30" r="3" fill="#fdf8f3"/><circle cx="38.5" cy="31.4" r="2.3" fill="#fdf8f3"/>
+
+    </symbol><symbol id="icon-filter-coffee" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M23 16h18l-2 21c-.5 3.4-3.3 5.4-7 5.4s-6.5-2-7-5.4Z" fill="#f5ede3" stroke="#3b1f12" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M24.2 20h15.6l-1 6H25.2Z" fill="#1a0f0a"/>
+    <path d="M14 44.5c0-3 2.6-5 6-5h24c3.4 0 6 2 6 5v3c0 2.5-2 4.5-4.4 4.5H18.4c-2.4 0-4.4-2-4.4-4.5Z" fill="#c8956a" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M13 22c2-1.8 2-4.2 0-6" stroke="#8a7060" stroke-width="2" fill="none" stroke-linecap="round" opacity=".6"/>
+</symbol><symbol id="icon-cold-brew" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M22 22h20l-2 24a5 5 0 0 1-5 4.6h-6a5 5 0 0 1-5-4.6Z" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M23.6 36h16.8l-1.6 12.6a3.4 3.4 0 0 1-3.4 3H28.6a3.4 3.4 0 0 1-3.4-3Z" fill="#1a0f0a"/>
+    <rect x="30.5" y="12" width="3" height="16" rx="1.5" fill="#8a7060" opacity=".8"/>
+    <circle cx="27" cy="30" r="2.2" fill="#fdf8f3" opacity=".85"/><circle cx="35" cy="35" r="2.4" fill="#fdf8f3" opacity=".85"/>
+    </symbol><symbol id="icon-iced-latte" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M22 22h20l-2 24a5 5 0 0 1-5 4.6h-6a5 5 0 0 1-5-4.6Z" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M23.6 36h16.8l-1.6 12.6a3.4 3.4 0 0 1-3.4 3H28.6a3.4 3.4 0 0 1-3.4-3Z" fill="#c8956a"/>
+    <rect x="30.5" y="12" width="3" height="16" rx="1.5" fill="#8a7060" opacity=".8"/>
+    <circle cx="27" cy="30" r="2.1" fill="#fdf8f3" opacity=".8"/><circle cx="36" cy="34" r="2.3" fill="#fdf8f3" opacity=".8"/><rect x="23.6" y="30" width="16.8" height="4" fill="#f5ede3" opacity=".55"/>
+    </symbol><symbol id="icon-fruit-shake" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M22 22h20l-2 24a5 5 0 0 1-5 4.6h-6a5 5 0 0 1-5-4.6Z" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M23.6 34h16.8l-1.6 12.6a3.4 3.4 0 0 1-3.4 3H28.6a3.4 3.4 0 0 1-3.4-3Z" fill="#8a5a2e"/>
+    <rect x="30.5" y="12" width="3" height="16" rx="1.5" fill="#8a7060" opacity=".8"/>
+    
+    <ellipse cx="32" cy="30" rx="9" ry="3" fill="#f5ede3"/>
+    <path d="M26 27c1.4-1.3 2.6-1.3 4 0s2.6 1.3 4 0 2.6-1.3 4 0" stroke="#e8a44a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+
+    </symbol><symbol id="icon-lemonade" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M22 22h20l-2 24a5 5 0 0 1-5 4.6h-6a5 5 0 0 1-5-4.6Z" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M23.6 38h16.8l-1.6 12.6a3.4 3.4 0 0 1-3.4 3H28.6a3.4 3.4 0 0 1-3.4-3Z" fill="#e8d97a"/>
+    <rect x="30.5" y="12" width="3" height="16" rx="1.5" fill="#8a7060" opacity=".8"/>
+    
+    <circle cx="26" cy="33" r="1.6" fill="#fdf8f3"/><circle cx="34" cy="38" r="1.4" fill="#fdf8f3"/><circle cx="30" cy="44" r="1.5" fill="#fdf8f3"/>
+    <circle cx="40" cy="24" r="5" fill="#e8a44a" stroke="#3b1f12" stroke-width="1.6"/>
+    <path d="M40 20v8M36 24h8" stroke="#fdf8f3" stroke-width="1.2"/>
+
+    </symbol><symbol id="icon-lassi" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M20 26h24l-2.2 22a5 5 0 0 1-5 4.4H27.2a5 5 0 0 1-5-4.4Z" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M21 30h22l-1.8 18.4a3.4 3.4 0 0 1-3.4 3H26.2a3.4 3.4 0 0 1-3.4-3Z" fill="#f2d9a0"/>
+    <path d="M23.6 34c2-1.8 3.6-1.8 5.6 0s3.6 1.8 5.6 0 3.6-1.8 5.6 0" stroke="#e8a44a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M23.6 40c2-1.8 3.6-1.8 5.6 0s3.6 1.8 5.6 0 3.6-1.8 5.6 0" stroke="#e8a44a" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/>
+</symbol><symbol id="icon-croissant" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M16 40c4-16 28-16 32 0-6-4-10-4-16-1s-10 3-16 1Z" fill="#c8956a" stroke="#3b1f12" stroke-width="2"/>
+    <path d="M22 33c2 1 4 1 6 0M27 29c2 1 4 1 6 0M33 29c2 1 4 1 6 0M38 33c2 1 4 1 6 0" stroke="#3b1f12" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".55"/>
+</symbol><symbol id="icon-toast" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <rect x="16" y="26" width="32" height="22" rx="4" fill="#e9c88a" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M20 34c4-3 6 3 10 0s6 3 10 0 6 3 8 0" fill="#7a9e7e"/>
+    <circle cx="25" cy="40" r="1.4" fill="#d4706a"/><circle cx="33" cy="42" r="1.4" fill="#d4706a"/><circle cx="40" cy="39" r="1.3" fill="#d4706a"/>
+</symbol><symbol id="icon-sandwich" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M14 44h36l-3-6H17Z" fill="#e9c88a" stroke="#3b1f12" stroke-width="2"/>
+    <rect x="16" y="33" width="32" height="5" fill="#7a9e7e"/>
+    <rect x="16" y="28" width="32" height="5" fill="#d4706a" opacity=".85"/>
+    <path d="M15 28h34l-3-6H18Z" fill="#f2dba6" stroke="#3b1f12" stroke-width="2"/>
+    <line x1="32" y1="18" x2="32" y2="46" stroke="#8a7060" stroke-width="1.6"/>
+</symbol><symbol id="icon-scone" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M32 16 50 46H14Z" fill="#e9c88a" stroke="#3b1f12" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M32 24 44 42H20Z" fill="#f5ede3" opacity=".5"/>
+    <circle cx="30" cy="32" r="1.3" fill="#3b1f12" opacity=".5"/><circle cx="35" cy="36" r="1.3" fill="#3b1f12" opacity=".5"/>
+</symbol><symbol id="icon-samosa" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M18 46 32 16l14 30Z" fill="#e3b45f" stroke="#3b1f12" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M22 42 32 22l10 20Z" fill="#e8a44a" opacity=".35"/>
+    <path d="M32 10c2 2 2 4 0 6" stroke="#8a7060" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".6"/>
+</symbol><symbol id="icon-fries" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M20 28h24l-3 20a3 3 0 0 1-3 2.6H26a3 3 0 0 1-3-2.6Z" fill="#d4706a" stroke="#3b1f12" stroke-width="2"/>
+    <rect x="21" y="14" width="4.5" height="20" rx="1.4" fill="#e8a44a" stroke="#3b1f12" stroke-width="1.4"/>
+    <rect x="26.5" y="10" width="4.5" height="24" rx="1.4" fill="#e8a44a" stroke="#3b1f12" stroke-width="1.4"/>
+    <rect x="32" y="13" width="4.5" height="21" rx="1.4" fill="#e8a44a" stroke="#3b1f12" stroke-width="1.4"/>
+    <rect x="37.5" y="16" width="4.5" height="18" rx="1.4" fill="#e8a44a" stroke="#3b1f12" stroke-width="1.4"/>
+</symbol><symbol id="icon-nachos" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M16 44 32 20l16 24Z" fill="#e3b45f" stroke="#3b1f12" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M22 40 32 26l10 14Z" fill="#e8a44a" opacity=".3"/>
+    <circle cx="26" cy="38" r="1.6" fill="#d4706a"/><circle cx="34" cy="35" r="1.5" fill="#d4706a"/><circle cx="30" cy="41" r="1.4" fill="#7a9e7e"/>
+    <path d="M20 48c8 4 16 4 24 0" stroke="#d4706a" stroke-width="3" fill="none" stroke-linecap="round"/>
+</symbol><symbol id="icon-bun-snack" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M16 32c0-7 7-11 16-11s16 4 16 11Z" fill="#e3b45f" stroke="#3b1f12" stroke-width="2.2"/>
+    <rect x="15" y="32" width="34" height="6" fill="#7a9e7e"/>
+    <rect x="15" y="37" width="34" height="6" fill="#8a5a2e"/>
+    <path d="M15 43h34l-2 4a3 3 0 0 1-3 2.4H20a3 3 0 0 1-3-2.4Z" fill="#f2dba6" stroke="#3b1f12" stroke-width="2"/>
+    <circle cx="24" cy="24" r="1.1" fill="#f5ede3"/><circle cx="32" cy="21" r="1.1" fill="#f5ede3"/><circle cx="40" cy="24" r="1.1" fill="#f5ede3"/>
+</symbol><symbol id="icon-eggs-benedict" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <ellipse cx="32" cy="38" rx="22" ry="12" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <circle cx="32" cy="35" r="10" fill="#f2dba6"/>
+    <circle cx="32" cy="35" r="6" fill="#e8a44a"/>
+    <path d="M20 44c8 3 16 3 24 0" stroke="#7a9e7e" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>
+</symbol><symbol id="icon-granola-bowl" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M14 30a18 12 0 0 0 36 0Z" fill="#c8956a" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M13 30h38l-2 5a5 5 0 0 1-5 3.6H20a5 5 0 0 1-5-3.6Z" fill="#3b1f12"/>
+    <circle cx="24" cy="27" r="1.6" fill="#8a5a2e"/><circle cx="30" cy="25" r="1.6" fill="#d4706a"/><circle cx="36" cy="27" r="1.6" fill="#8a5a2e"/><circle cx="41" cy="25" r="1.4" fill="#d4706a"/><circle cx="27" cy="23" r="1.3" fill="#f5ede3"/>
+</symbol><symbol id="icon-pasta" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <ellipse cx="32" cy="38" rx="20" ry="10" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M18 34c3-3 5 3 8 0s5 3 8 0 5 3 8 0 5 3 8 0" stroke="#e8a44a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <path d="M20 39c3-3 5 3 8 0s5 3 8 0 5 3 8 0" stroke="#e8a44a" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".8"/>
+    <circle cx="26" cy="35" r="1.3" fill="#7a9e7e"/><circle cx="36" cy="37" r="1.3" fill="#d4706a"/>
+</symbol><symbol id="icon-pizza" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M32 14 50 46H14Z" fill="#e8a44a" stroke="#3b1f12" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M32 21 44 42H20Z" fill="#f2c96a"/>
+    <circle cx="30" cy="30" r="2.4" fill="#d4706a"/><circle cx="36" cy="34" r="2.2" fill="#d4706a"/><circle cx="31" cy="38" r="2" fill="#d4706a"/>
+    <path d="M27 27c1 1 2 1 3 0M35 30c1 1 2 1 3 0" stroke="#7a9e7e" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+</symbol><symbol id="icon-asian-bowl" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M14 32a18 12 0 0 0 36 0Z" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M13 32h38l-2 4.6a5 5 0 0 1-5 3.8H20a5 5 0 0 1-5-3.8Z" fill="#3b1f12"/>
+    <path d="M19 29c3-2.4 5 2.4 8 0s5 2.4 8 0 5 2.4 8 0" stroke="#e8a44a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <rect x="42" y="10" width="2.6" height="18" rx="1.2" fill="#8a7060" transform="rotate(18 43 19)"/>
+    <rect x="46" y="10" width="2.6" height="18" rx="1.2" fill="#8a7060" transform="rotate(18 47 19)"/>
+</symbol><symbol id="icon-wrap" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M20 18 46 44a9 9 0 0 1-13 13L18 40Z" fill="#f2dba6" stroke="#3b1f12" stroke-width="2.2" stroke-linejoin="round"/>
+    <ellipse cx="34" cy="36" rx="8.5" ry="8.5" fill="#fdf8f3" stroke="#3b1f12" stroke-width="1.8"/>
+    <path d="M29 32c2 2 2 4 0 6M34 30c2 2 2 6 0 8M39 32c2 2 2 4 0 6" stroke="#7a9e7e" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <circle cx="34" cy="36" r="1.6" fill="#d4706a"/>
+</symbol><symbol id="icon-burger" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M16 30c0-7 7-11 16-11s16 4 16 11Z" fill="#e3b45f" stroke="#3b1f12" stroke-width="2.2"/>
+    <rect x="15" y="30" width="34" height="4.5" fill="#7a9e7e"/>
+    <rect x="15" y="34.5" width="34" height="5.5" fill="#7a4a26"/>
+    <rect x="15" y="40" width="34" height="4.5" fill="#d4706a" opacity=".85"/>
+    <path d="M15 44.5h34l-2 4a3 3 0 0 1-3 2.4H20a3 3 0 0 1-3-2.4Z" fill="#f2dba6" stroke="#3b1f12" stroke-width="2"/>
+    <circle cx="23" cy="22" r="1.1" fill="#f5ede3"/><circle cx="32" cy="19" r="1.1" fill="#f5ede3"/><circle cx="41" cy="22" r="1.1" fill="#f5ede3"/>
+</symbol><symbol id="icon-tiramisu" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <rect x="18" y="20" width="28" height="28" rx="3" fill="#e9c88a" stroke="#3b1f12" stroke-width="2.2"/>
+    <rect x="18" y="20" width="28" height="9" fill="#3b1f12"/>
+    <rect x="18" y="34" width="28" height="5" fill="#3b1f12" opacity=".55"/>
+    <g fill="#f5ede3" opacity=".9"><circle cx="24" cy="24" r="1" /><circle cx="29" cy="25" r="1"/><circle cx="34" cy="24" r="1"/><circle cx="39" cy="25" r="1"/><circle cx="26" cy="27" r="1"/><circle cx="32" cy="27" r="1"/><circle cx="37" cy="27" r="1"/></g>
+</symbol><symbol id="icon-brownie" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <rect x="16" y="26" width="26" height="22" rx="3" fill="#4a2c1a" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M18 30c6 2 10-2 14 0s8-2 10 1" stroke="#3b1f12" stroke-width="1.6" fill="none" opacity=".5"/>
+    <circle cx="45" cy="42" r="7" fill="#fdf8f3" stroke="#3b1f12" stroke-width="1.8"/>
+    <circle cx="45" cy="38" r="4" fill="#fdf8f3" stroke="#3b1f12" stroke-width="1.6"/>
+</symbol><symbol id="icon-cheesecake" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M16 46 32 18l16 28Z" fill="#f7e2ad" stroke="#3b1f12" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M16 46h32l-1.5-3H17.5Z" fill="#3b1f12"/>
+    <path d="M27 30c-3 4-3 8 0 12M37 30c3 4 3 8 0 12" stroke="#d4706a" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"/>
+</symbol><symbol id="icon-gulab-jamun" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M18 34h28l-2 10a5 5 0 0 1-5 4H25a5 5 0 0 1-5-4Z" fill="#f2dba6" stroke="#3b1f12" stroke-width="2"/>
+    <path d="M20 36h24l-1.4 8.4a3.4 3.4 0 0 1-3.4 3H24.8a3.4 3.4 0 0 1-3.4-3Z" fill="#c98a3a" opacity=".55"/>
+    <circle cx="26" cy="28" r="7" fill="#6b3a1a" stroke="#3b1f12" stroke-width="2"/>
+    <circle cx="38" cy="30" r="6" fill="#6b3a1a" stroke="#3b1f12" stroke-width="2"/>
+    <circle cx="24" cy="25" r="1.1" fill="#f5ede3" opacity=".7"/><circle cx="36" cy="27" r="1" fill="#f5ede3" opacity=".7"/>
+</symbol><symbol id="icon-lava-cake" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M16 40c0-9 7.2-16 16-16s16 7 16 16Z" fill="#4a2c1a" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M16 40h32v3a5 5 0 0 1-5 5H21a5 5 0 0 1-5-5Z" fill="#3b1f12"/>
+    <path d="M28 26c1 4-1 6-2 9M36 26c1 4-1 6-2 9" stroke="#e8a44a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="32" cy="47" rx="6" ry="2.4" fill="#e8a44a" opacity=".85"/>
+</symbol><symbol id="icon-ice-cream" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M24 30 32 52 40 30Z" fill="#f2dba6" stroke="#3b1f12" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M25 31l7 3 7-3" stroke="#3b1f12" stroke-width="1.3" opacity=".55"/>
+    <path d="M25 37l7 3 7-3" stroke="#3b1f12" stroke-width="1.3" opacity=".55"/>
+    <circle cx="32" cy="24" r="10" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <circle cx="32" cy="14" r="7.5" fill="#f6c9d0" stroke="#3b1f12" stroke-width="2"/>
+</symbol><symbol id="icon-cupcake" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <path d="M18 34h28l-2.6 12a5 5 0 0 1-5 4H25.6a5 5 0 0 1-5-4Z" fill="#e3b45f" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M20.4 37h23.2" stroke="#3b1f12" stroke-width="1.4" opacity=".4"/>
+    <path d="M18 34c0-8 5-14 14-14s14 6 14 14Z" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <circle cx="32" cy="16" r="2.6" fill="#d4706a" stroke="#3b1f12" stroke-width="1.6"/>
+    <circle cx="24" cy="26" r="1.2" fill="#d4706a"/><circle cx="40" cy="26" r="1.2" fill="#7a9e7e"/><circle cx="32" cy="30" r="1.2" fill="#e8a44a"/>
+</symbol><symbol id="icon-default" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(200,149,106,0.16)"/>
+    <ellipse cx="32" cy="40" rx="18" ry="7" fill="#fdf8f3" stroke="#3b1f12" stroke-width="2.2"/>
+    <path d="M22 26h20l-2 10H24Z" fill="#3b1f12" stroke="#3b1f12" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M27 18q5-4 10 0" stroke="#8a7060" stroke-width="2" fill="none" stroke-linecap="round" opacity=".6"/>
+</symbol></svg>
+
+<!-- ════════════════════════════════════════════
+     PORTAL LANDING
+════════════════════════════════════════════ -->
+<div class="portal-screen" id="landingScreen">
+  <div>
+    <div class="portal-logo">Brew <span>&amp;</span> Co.</div>
+    <div class="portal-tag">POINT OF SALE</div>
+  </div>
+  <div class="portal-cards">
+    <div class="portal-card" id="pickCustomer">
+      <div class="portal-card-icon">☕</div>
+      <div class="portal-card-title">Customer</div>
+      <div class="portal-card-desc">Browse the menu and place your order. No password needed.</div>
+      <div class="portal-card-cta">START ORDERING →</div>
+    </div>
+    <div class="portal-card" id="pickOwner">
+      <div class="portal-card-icon">🔐</div>
+      <div class="portal-card-title">Owner</div>
+      <div class="portal-card-desc">Manage the menu, take orders, and view reports &amp; history.</div>
+      <div class="portal-card-cta">OWNER LOGIN →</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     OWNER LOGIN
+════════════════════════════════════════════ -->
+<div class="portal-screen" id="ownerLoginScreen" style="display:none">
+  <div class="login-card">
+    <div class="login-card-title">Owner Login</div>
+    <div class="login-card-sub">Enter the owner password to continue.</div>
+    <div class="login-error" id="loginError"></div>
+    <input class="login-input" id="ownerPasswordInput" type="password" placeholder="Password" autocomplete="current-password" />
+    <button class="btn btn-primary" id="ownerLoginBtn" style="width:100%;justify-content:center;">Log In</button>
+    <a class="login-back" id="backToLanding">← Back</a>
+  </div>
+</div>
+
 <!-- ════════════════════════════════════════════
      LAYOUT
 ════════════════════════════════════════════ -->
-<div class="app">
+<div class="app" id="appRoot" style="display:none">
 
   <!-- top bar -->
   <header class="topbar">
     <div class="logo">Brew <span>&amp;</span> Co.</div>
 
-    <div class="topbar-tabs">
+    <div class="topbar-tabs" id="topbarTabs">
       <button class="tab-btn active" data-view="pos">☕  Order</button>
-      <button class="tab-btn"        data-view="reports">📊  Reports</button>
-      <button class="tab-btn"        data-view="history">🗃  History</button>
+      <button class="tab-btn" data-view="menu" id="menuTabBtn" style="display:none;">🧾  Menu</button>
+      <button class="tab-btn" data-view="reports" id="reportsTabBtn" style="display:none;">📊  Reports</button>
+      <button class="tab-btn" data-view="history" id="historyTabBtn" style="display:none;">🗃  History</button>
     </div>
 
     <div class="topbar-info">
+      <span class="owner-chip" id="ownerChip" style="display:none;">Owner</span>
       <span style="color:var(--muted);font-size:.75rem;">Table</span>
-      <input class="table-input" id="tableInput" placeholder="T1" maxlength="4" />
+      <select class="table-input" id="tableInput"></select>
+      <span class="portal-exit" id="logoutBtn" style="display:none;">Log out</span>
+      <span class="portal-exit" id="exitPortalBtn">Switch portal</span>
     </div>
   </header>
 
@@ -768,10 +1321,14 @@
         <input class="discount-input" id="discountInput" type="number" min="0" step="0.5" placeholder="0.00" />
       </div>
       <div class="totals" id="totalsBox"></div>
+      <div class="pay-methods" id="payMethods" style="display:none;">
+        <button class="pay-method-btn" data-method="cash"><span class="pm-icon">💵</span>Cash</button>
+        <button class="pay-method-btn" data-method="card"><span class="pm-icon">💳</span>Card</button>
+        <button class="pay-method-btn" data-method="upi"><span class="pm-icon">📱</span>UPI</button>
+      </div>
       <div class="action-btns">
         <button class="btn btn-outline" id="clearBtn">Clear</button>
-        <button class="btn btn-primary" id="billBtn" disabled>Bill</button>
-        <button class="btn btn-amber"   id="payBtn"  disabled>Place Order &amp; Pay</button>
+        <button class="btn btn-amber" id="placeOrderBtn" disabled style="flex:1;">Place Order</button>
       </div>
     </div>
   </aside>
@@ -791,8 +1348,63 @@
   <!-- ── History view ───────────────────────── -->
   <section class="view-area" id="historyView">
     <div class="view-title">Order History</div>
-    <div class="view-sub">All billed and paid orders</div>
+    <div class="view-sub">All billed and paid orders — sorted by date</div>
+    <div class="history-toolbar">
+      <select class="sort-select" id="historySortSelect">
+        <option value="desc">Newest first</option>
+        <option value="asc">Oldest first</option>
+      </select>
+      <div style="position:relative;">
+        <button class="date-pick-btn" id="dateFilterBtn">📅 <span id="dateFilterLabel">All dates</span><span class="date-clear-x" id="dateClearX" style="display:none;">✕</span></button>
+        <div class="calendar-pop" id="calendarPop">
+          <div class="cal-head">
+            <button class="cal-nav" id="calPrev">‹</button>
+            <span class="cal-title" id="calTitle"></span>
+            <button class="cal-nav" id="calNext">›</button>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+      </div>
+    </div>
     <div id="historyContent"><div class="loader">Loading…</div></div>
+  </section>
+
+  <!-- ── Menu management view (owner only) ─────── -->
+  <section class="view-area" id="menuMgmtView">
+    <div class="view-title">Menu Management</div>
+    <div class="view-sub">Add, edit, or remove menu items</div>
+    <div class="mgmt-toolbar">
+      <button class="btn btn-primary" id="toggleAddItemBtn">+ Add Item</button>
+    </div>
+    <div class="add-item-form" id="addItemForm">
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Name</label>
+          <input id="newItemName" placeholder="e.g. Iced Mocha" />
+        </div>
+        <div class="form-field">
+          <label>Category</label>
+          <select id="newItemCategory"></select>
+        </div>
+        <div class="form-field">
+          <label>Price (₹)</label>
+          <input id="newItemPrice" type="number" min="0" step="0.25" placeholder="0.00" />
+        </div>
+        <div class="form-field">
+          <label>Description</label>
+          <input id="newItemDesc" placeholder="Short description" />
+        </div>
+      </div>
+      <div class="form-field" style="margin-bottom:12px;">
+        <label>Icon</label>
+        <div class="icon-pick-grid" id="newItemIconGrid"></div>
+      </div>
+      <div class="action-btns">
+        <button class="btn btn-outline" id="cancelAddItemBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveNewItemBtn">Save Item</button>
+      </div>
+    </div>
+    <div class="mgmt-table-wrap" id="mgmtTableWrap"></div>
   </section>
 
 </div>
@@ -811,17 +1423,28 @@
    CONFIG
 ══════════════════════════════════════════════════ */
 const API = "/api";
+const CACHE_TTL = 20000; // reports/history reuse a cached response for 20s so
+                          // flipping between tabs doesn't re-hit the network
+                          // every time
 
 /* ══════════════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════════ */
-let menuData   = [];       // categories + items from API
-let cart       = {};       // { item_id: { item, qty } }
-let activeView = "pos";
-let activeCat  = null;
-let searchQ    = "";
+let menuData    = [];       // categories + items from API
+let cart        = {};       // { item_id: { item, qty } }
+let activeView  = "pos";
+let activeCat   = null;
+let searchQ     = "";
 let currentPeriod = "today";
-let histPage   = 1;
+let histPage    = 1;
+let histSort    = "desc";
+let selectedDate = null;    // YYYY-MM-DD or null (history calendar filter)
+let calViewYear, calViewMonth;
+let ownerToken  = localStorage.getItem("bcOwnerToken") || null;
+let portalMode  = null;     // "customer" | "owner"
+let checkoutStep = "idle";  // "idle" | "choosing"
+let selectedPaymentMethod = null;
+const _cache = {};          // lightweight TTL cache for reports/history
 
 /* ══════════════════════════════════════════════════
    UTILS
@@ -830,17 +1453,26 @@ const fmt = v => "₹" + Number(v).toFixed(2);
 const fmtDate = s => new Date(s).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
 async function api(path, opts = {}) {
+  const headers = { "Content-Type": "application/json" };
+  if (ownerToken) headers["Authorization"] = `Bearer ${ownerToken}`;
+  let r, data = null;
   try {
-    const r = await fetch(API + path, {
-      headers: { "Content-Type": "application/json" },
-      ...opts,
-    });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return r.json();
+    r = await fetch(API + path, { headers, ...opts });
+    data = await r.json().catch(() => null);
   } catch (e) {
-    toast("error", "Backend unreachable — showing demo mode");
-    return null;
+    toast("error", "Can't reach the server — check your connection");
+    return { ok: false, status: 0, data: null };
   }
+  const isAuthEndpoint = path.startsWith("/owner/login");
+  if (r.status === 401 && !isAuthEndpoint) {
+    ownerToken = null;
+    localStorage.removeItem("bcOwnerToken");
+    if (portalMode === "owner") {
+      toast("error", "Session expired — please log in again");
+      showOwnerLogin();
+    }
+  }
+  return { ok: r.ok, status: r.status, data };
 }
 
 function toast(type, msg) {
@@ -851,14 +1483,94 @@ function toast(type, msg) {
   setTimeout(() => el.remove(), 3500);
 }
 
+function iconSvg(key, cls) {
+  return `<svg class="${cls}"><use href="#icon-${key || 'default'}"/></svg>`;
+}
+
+/* ══════════════════════════════════════════════════
+   PORTAL / AUTH
+══════════════════════════════════════════════════ */
+function showLanding() {
+  portalMode = null;
+  cart = {};
+  document.getElementById("landingScreen").style.display = "flex";
+  document.getElementById("ownerLoginScreen").style.display = "none";
+  document.getElementById("appRoot").style.display = "none";
+  const errEl = document.getElementById("loginError");
+  errEl.classList.remove("show");
+  document.getElementById("ownerPasswordInput").value = "";
+  history.replaceState(null, "", location.pathname + location.search);
+}
+
+function showOwnerLogin() {
+  document.getElementById("landingScreen").style.display = "none";
+  document.getElementById("ownerLoginScreen").style.display = "flex";
+  document.getElementById("appRoot").style.display = "none";
+  setTimeout(() => {
+    const el = document.getElementById("ownerPasswordInput");
+    if (el) el.focus();
+  }, 50);
+}
+
+function enterCustomerPortal() {
+  portalMode = "customer";
+  document.getElementById("landingScreen").style.display = "none";
+  document.getElementById("ownerLoginScreen").style.display = "none";
+  document.getElementById("appRoot").style.display = "grid";
+  document.getElementById("ownerChip").style.display = "none";
+  document.getElementById("logoutBtn").style.display = "none";
+  ["menuTabBtn", "reportsTabBtn", "historyTabBtn"].forEach(id => {
+    document.getElementById(id).style.display = "none";
+  });
+  location.hash = "customer";
+  switchView("pos");
+}
+
+function enterOwnerPortal() {
+  portalMode = "owner";
+  document.getElementById("landingScreen").style.display = "none";
+  document.getElementById("ownerLoginScreen").style.display = "none";
+  document.getElementById("appRoot").style.display = "grid";
+  document.getElementById("ownerChip").style.display = "";
+  document.getElementById("logoutBtn").style.display = "";
+  ["menuTabBtn", "reportsTabBtn", "historyTabBtn"].forEach(id => {
+    document.getElementById(id).style.display = "";
+  });
+  location.hash = "owner";
+  switchView("pos");
+}
+
+async function attemptOwnerLogin() {
+  const pwInput = document.getElementById("ownerPasswordInput");
+  const pw = pwInput.value;
+  const errEl = document.getElementById("loginError");
+  errEl.classList.remove("show");
+  if (!pw) return;
+  const btn = document.getElementById("ownerLoginBtn");
+  btn.disabled = true;
+  const res = await api("/owner/login", { method: "POST", body: JSON.stringify({ password: pw }) });
+  btn.disabled = false;
+  if (!res.ok) {
+    errEl.textContent = (res.data && res.data.message) || "Login failed. Please try again.";
+    errEl.classList.add("show");
+    pwInput.value = "";
+    pwInput.focus();
+    return;
+  }
+  ownerToken = res.data.token;
+  localStorage.setItem("bcOwnerToken", ownerToken);
+  toast("success", "Logged in as owner");
+  enterOwnerPortal();
+}
+
 /* ══════════════════════════════════════════════════
    MENU
 ══════════════════════════════════════════════════ */
 async function loadMenu() {
-  const data = await api("/menu");
-  if (!data) return;
-  menuData = data;
-  if (menuData.length) activeCat = menuData[0].id;
+  const res = await api("/menu");
+  if (!res.ok) return;
+  menuData = res.data;
+  if (menuData.length && !menuData.some(c => c.id === activeCat)) activeCat = menuData[0].id;
   renderSidebar();
   renderMenu();
 }
@@ -882,7 +1594,7 @@ function renderMenu() {
     const q = searchQ.toLowerCase();
     cats = cats.map(c => ({
       ...c,
-      items: c.items.filter(i => i.name.toLowerCase().includes(q) || (i.description||"").toLowerCase().includes(q))
+      items: c.items.filter(i => i.name.toLowerCase().includes(q) || (i.description || "").toLowerCase().includes(q))
     })).filter(c => c.items.length);
   } else {
     cats = cats.filter(c => c.id === activeCat);
@@ -900,6 +1612,7 @@ function renderMenu() {
         <div class="menu-card ${item.available ? "" : "unavailable"}"
              onclick="${item.available ? `addToCart(${item.id})` : ""}">
           <div class="add-dot">＋</div>
+          ${iconSvg(item.image_key, "menu-card-icon")}
           <div class="menu-card-name">${item.name}</div>
           <div class="menu-card-desc">${item.description || ""}</div>
           <div class="menu-card-price">${fmt(item.price)}</div>
@@ -909,7 +1622,6 @@ function renderMenu() {
     <div style="height:28px"></div>
   `).join("");
 
-  // expose items lookup
   window._itemMap = {};
   menuData.forEach(c => c.items.forEach(i => window._itemMap[i.id] = i));
 }
@@ -940,6 +1652,7 @@ function removeFromCart(id) {
 function clearCart() {
   cart = {};
   document.getElementById("discountInput").value = "";
+  resetCheckoutFlow();
   renderCart();
 }
 
@@ -961,7 +1674,7 @@ function renderCart() {
   } else {
     listEl.innerHTML = entries.map(e => `
       <div class="order-item">
-        <div class="oi-name">${e.item.name}</div>
+        <div class="oi-name">${iconSvg(e.item.image_key, "oi-icon")}${e.item.name}</div>
         <div class="oi-price">${fmt(e.item.price * e.qty)}</div>
         <div class="oi-controls">
           <button onclick="updateQty(${e.item.id},-1)">−</button>
@@ -985,24 +1698,44 @@ function renderCart() {
     <div class="totals-row total"><span>Total</span><span>${fmt(grand)}</span></div>
   `;
 
-  const hasItems = entries.length > 0;
-  document.getElementById("billBtn").disabled = !hasItems;
-  document.getElementById("payBtn").disabled  = !hasItems;
+  updatePlaceOrderButton();
 }
 
 /* ══════════════════════════════════════════════════
-   PLACE ORDER
+   CHECKOUT — merged bill + place order + payment
 ══════════════════════════════════════════════════ */
-async function placeOrder(status = "open") {
+function updatePlaceOrderButton() {
+  const btn = document.getElementById("placeOrderBtn");
+  const hasItems = Object.keys(cart).length > 0;
+  if (checkoutStep === "choosing") {
+    btn.textContent = selectedPaymentMethod ? "Confirm & Place Order" : "Choose a payment method ↑";
+    btn.disabled = !selectedPaymentMethod;
+  } else {
+    btn.textContent = "Place Order";
+    btn.disabled = !hasItems;
+  }
+}
+
+function resetCheckoutFlow() {
+  checkoutStep = "idle";
+  selectedPaymentMethod = null;
+  const pm = document.getElementById("payMethods");
+  if (pm) pm.style.display = "none";
+  document.querySelectorAll(".pay-method-btn").forEach(b => b.classList.remove("active"));
+  updatePlaceOrderButton();
+}
+
+async function placeOrder(paymentMethod) {
   const entries = Object.values(cart);
   if (!entries.length) return;
 
   const discount = parseFloat(document.getElementById("discountInput").value) || 0;
-  const table    = document.getElementById("tableInput").value.trim() || "T1";
+  const table    = document.getElementById("tableInput").value || "T1";
 
   const payload = {
     table_no: table,
     discount,
+    payment_method: paymentMethod,
     items: entries.map(e => ({
       item_id:    e.item.id,
       quantity:   e.qty,
@@ -1010,34 +1743,31 @@ async function placeOrder(status = "open") {
     })),
   };
 
-  const order = await api("/orders", {
-    method: "POST",
-    body:   JSON.stringify(payload),
-  });
-
-  if (!order) return;
-
-  // immediately mark billed or paid
-  if (status === "billed" || status === "paid") {
-    await api(`/orders/${order.id}/status`, {
-      method: "PATCH",
-      body:   JSON.stringify({ status }),
-    });
+  const btn = document.getElementById("placeOrderBtn");
+  btn.disabled = true;
+  const res = await api("/orders", { method: "POST", body: JSON.stringify(payload) });
+  if (!res.ok) {
+    toast("error", (res.data && (res.data.error || res.data.message)) || "Couldn't place order");
+    updatePlaceOrderButton();
+    return;
   }
 
+  const order = res.data;
   toast("success", `Order #${order.id} placed for ${table}`);
+  invalidateHistoryCache();
   clearCart();
-
-  if (status === "paid") showReceipt(order.id);
+  showReceipt(order.id);
 }
 
 /* ══════════════════════════════════════════════════
    RECEIPT
 ══════════════════════════════════════════════════ */
+const PAYMENT_LABELS = { cash: "Cash", card: "Card", upi: "UPI" };
+
 async function showReceipt(orderId) {
-  const data = await api(`/orders/${orderId}/receipt`);
-  if (!data) return;
-  const r = data.receipt;
+  const res = await api(`/orders/${orderId}/receipt`);
+  if (!res.ok) return;
+  const r = res.data.receipt;
 
   document.getElementById("receiptCard").innerHTML = `
     <div class="receipt-header">
@@ -1046,7 +1776,8 @@ async function showReceipt(orderId) {
     </div>
     <div class="receipt-body">
       <div class="receipt-meta">
-        Order <b>#${r.order_id}</b> · Table <b>${r.table_no || "—"}</b><br/>
+        Order <b>#${r.order_id}</b> · Table <b>${r.table_no || "—"}</b>
+        ${r.payment_method ? ` · Paid via <b>${PAYMENT_LABELS[r.payment_method] || r.payment_method}</b>` : ""}<br/>
         ${fmtDate(r.created_at)}
       </div>
       <div class="receipt-items">
@@ -1088,12 +1819,23 @@ function closeReceipt() {
 async function loadReports(period = "today") {
   currentPeriod = period;
   const el = document.getElementById("reportsContent");
+  const cacheKey = `reports:${period}`;
+  const cached = _cache[cacheKey];
+  if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    renderReports(cached.data, period);
+    return;
+  }
   el.innerHTML = `<div class="loader">Loading…</div>`;
-  const data = await api(`/reports/sales?period=${period}`);
-  if (!data) { el.innerHTML = `<div class="loader">Could not load — is the backend running?</div>`; return; }
+  const res = await api(`/reports/sales?period=${period}`);
+  if (!res.ok) { el.innerHTML = `<div class="loader">Could not load — is the backend running?</div>`; return; }
+  _cache[cacheKey] = { ts: Date.now(), data: res.data };
+  renderReports(res.data, period);
+}
 
+function renderReports(data, period) {
+  const el = document.getElementById("reportsContent");
   const s = data.summary;
-  const maxRev = Math.max(...(data.daily.map(d => d.revenue) || [1]));
+  const maxRev = Math.max(...(data.daily.map(d => d.revenue)), 1);
 
   el.innerHTML = `
     <div class="stats-grid">
@@ -1147,15 +1889,32 @@ async function loadReports(period = "today") {
 }
 
 /* ══════════════════════════════════════════════════
-   HISTORY
+   HISTORY — date filter, sort, delete
 ══════════════════════════════════════════════════ */
 async function loadHistory(page = 1) {
   histPage = page;
   const el = document.getElementById("historyContent");
+  const cacheKey = `history:${page}:${histSort}:${selectedDate || "all"}`;
+  const cached = _cache[cacheKey];
+  if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    renderHistory(cached.data, page);
+    return;
+  }
   el.innerHTML = `<div class="loader">Loading…</div>`;
-  const data = await api(`/reports/order-history?page=${page}&per_page=15`);
-  if (!data) { el.innerHTML = `<div class="loader">Could not load</div>`; return; }
+  let url = `/reports/order-history?page=${page}&per_page=15&sort=${histSort}`;
+  if (selectedDate) url += `&date=${selectedDate}`;
+  const res = await api(url);
+  if (!res.ok) { el.innerHTML = `<div class="loader">Could not load history</div>`; return; }
+  _cache[cacheKey] = { ts: Date.now(), data: res.data };
+  renderHistory(res.data, page);
+}
 
+function invalidateHistoryCache() {
+  Object.keys(_cache).forEach(k => { if (k.startsWith("history:") || k.startsWith("reports:")) delete _cache[k]; });
+}
+
+function renderHistory(data, page) {
+  const el = document.getElementById("historyContent");
   const rows = data.orders.map(o => `
     <tr>
       <td><b>#${o.id}</b></td>
@@ -1163,10 +1922,13 @@ async function loadHistory(page = 1) {
       <td>${fmtDate(o.created_at)}</td>
       <td>${o.item_count} item${o.item_count !== 1 ? "s" : ""}</td>
       <td>${fmt(o.total)}</td>
+      <td>${o.payment_method ? PAYMENT_LABELS[o.payment_method] || o.payment_method : "—"}${o.placed_by === "owner" ? " <span style='color:var(--muted);font-size:.7rem'>(owner)</span>" : ""}</td>
       <td><span class="status-pill status-${o.status}">${o.status}</span></td>
       <td>
-        <button class="btn btn-outline" style="padding:5px 12px;font-size:.75rem"
-                onclick="showReceipt(${o.id})">Receipt</button>
+        <div class="history-row-actions">
+          <button class="btn btn-outline" style="padding:5px 10px;font-size:.75rem" onclick="showReceipt(${o.id})">Receipt</button>
+          <button class="history-del-btn" title="Delete this order" onclick="confirmDeleteOrder(${o.id})">🗑</button>
+        </div>
       </td>
     </tr>
   `).join("");
@@ -1180,36 +1942,240 @@ async function loadHistory(page = 1) {
       <table class="history-table">
         <thead><tr>
           <th>Order</th><th>Table</th><th>Time</th>
-          <th>Items</th><th>Total</th><th>Status</th><th></th>
+          <th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th></th>
         </tr></thead>
-        <tbody>${rows || `<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">No orders yet</td></tr>`}</tbody>
+        <tbody>${rows || `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--muted)">No orders ${selectedDate ? "on this day" : "yet"}</td></tr>`}</tbody>
       </table>
     </div>
     <div class="pagination">${pages}</div>
   `;
 }
 
+async function confirmDeleteOrder(id) {
+  if (!confirm(`Delete order #${id}? This can't be undone.`)) return;
+  const res = await api(`/orders/${id}`, { method: "DELETE" });
+  if (!res.ok) { toast("error", (res.data && res.data.message) || "Couldn't delete order"); return; }
+  toast("success", `Order #${id} deleted`);
+  invalidateHistoryCache();
+  loadHistory(histPage);
+}
+window.confirmDeleteOrder = confirmDeleteOrder;
+
+/* ── calendar date-picker ─────────────────────────── */
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function toggleCalendar() {
+  const pop = document.getElementById("calendarPop");
+  if (pop.classList.contains("open")) { pop.classList.remove("open"); return; }
+  const base = selectedDate ? new Date(selectedDate + "T00:00:00") : new Date();
+  calViewYear = base.getFullYear();
+  calViewMonth = base.getMonth();
+  renderCalendar();
+  pop.classList.add("open");
+}
+
+function renderCalendar() {
+  const grid = document.getElementById("calGrid");
+  document.getElementById("calTitle").textContent = `${MONTH_NAMES[calViewMonth]} ${calViewYear}`;
+
+  const firstDow = new Date(calViewYear, calViewMonth, 1).getDay();
+  const daysInMonth = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  let html = ["S","M","T","W","T","F","S"].map(d => `<div class="cal-dow">${d}</div>`).join("");
+  for (let i = 0; i < firstDow; i++) html += `<button class="cal-day empty" disabled></button>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${calViewYear}-${String(calViewMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const cls = [
+      "cal-day",
+      dateStr === todayStr ? "today" : "",
+      dateStr === selectedDate ? "selected" : "",
+    ].join(" ");
+    const disabled = dateStr > todayStr ? "disabled" : "";
+    html += `<button class="${cls}" ${disabled} onclick="pickDate('${dateStr}')">${d}</button>`;
+  }
+  grid.innerHTML = html;
+}
+
+function pickDate(dateStr) {
+  selectedDate = dateStr;
+  document.getElementById("calendarPop").classList.remove("open");
+  updateDateFilterUI();
+  loadHistory(1);
+}
+window.pickDate = pickDate;
+
+function clearDateFilter(e) {
+  if (e) e.stopPropagation();
+  selectedDate = null;
+  updateDateFilterUI();
+  loadHistory(1);
+}
+
+function updateDateFilterUI() {
+  const label = document.getElementById("dateFilterLabel");
+  const btn = document.getElementById("dateFilterBtn");
+  const x = document.getElementById("dateClearX");
+  if (selectedDate) {
+    const d = new Date(selectedDate + "T00:00:00");
+    label.textContent = d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+    btn.classList.add("has-filter");
+    x.style.display = "";
+  } else {
+    label.textContent = "All dates";
+    btn.classList.remove("has-filter");
+    x.style.display = "none";
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   OWNER: MENU MANAGEMENT
+══════════════════════════════════════════════════ */
+async function loadMenuMgmt() {
+  await loadMenu();
+  populateCategoryDropdown();
+  renderMgmtTable();
+}
+
+function populateCategoryDropdown() {
+  const sel = document.getElementById("newItemCategory");
+  sel.innerHTML = menuData.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join("");
+}
+
+function allIconKeys() {
+  return Array.from(document.querySelectorAll("svg symbol")).map(s => s.id.replace("icon-", ""));
+}
+
+function populateIconPicker(selected) {
+  const grid = document.getElementById("newItemIconGrid");
+  const chosen = selected || "default";
+  grid.innerHTML = allIconKeys().map(key => `
+    <div class="icon-pick-opt ${key === chosen ? "selected" : ""}" data-icon="${key}" onclick="selectIcon('${key}')" title="${key}">
+      ${iconSvg(key, "mgmt-icon")}
+    </div>
+  `).join("");
+  grid.dataset.selected = chosen;
+}
+window.selectIcon = function (key) {
+  const grid = document.getElementById("newItemIconGrid");
+  grid.dataset.selected = key;
+  grid.querySelectorAll(".icon-pick-opt").forEach(el => el.classList.toggle("selected", el.dataset.icon === key));
+};
+
+function renderMgmtTable() {
+  const wrap = document.getElementById("mgmtTableWrap");
+  const allItems = menuData.flatMap(c => c.items.map(i => ({ ...i, cat_name: c.name })));
+  wrap.innerHTML = `
+    <div class="mgmt-row head">
+      <span></span><span>Name</span><span>Category</span><span>Price</span><span>Available</span><span>Actions</span>
+    </div>
+    ${allItems.map(i => `
+      <div class="mgmt-row" data-id="${i.id}">
+        ${iconSvg(i.image_key, "mgmt-icon")}
+        <span>${i.name}</span>
+        <span style="color:var(--muted);font-size:.76rem">${i.cat_name}</span>
+        <span>${fmt(i.price)}</span>
+        <button class="avail-toggle ${i.available ? "on" : ""}" title="${i.available ? "Available" : "Unavailable"}" onclick="toggleAvailable(${i.id}, ${i.available ? 0 : 1})"></button>
+        <div class="mgmt-actions">
+          <button class="mgmt-icon-btn danger" title="Delete" onclick="deleteMenuItemUI(${i.id})">🗑</button>
+        </div>
+      </div>
+    `).join("") || `<div style="padding:24px;text-align:center;color:var(--muted);font-size:.85rem;">No menu items yet</div>`}
+  `;
+}
+
+window.toggleAvailable = async function (id, newVal) {
+  const res = await api(`/menu/items/${id}`, { method: "PUT", body: JSON.stringify({ available: newVal }) });
+  if (!res.ok) { toast("error", "Couldn't update item"); return; }
+  await loadMenu();
+  renderMgmtTable();
+};
+
+window.deleteMenuItemUI = async function (id) {
+  if (!confirm("Delete this menu item? This can't be undone.")) return;
+  const res = await api(`/menu/items/${id}`, { method: "DELETE" });
+  if (!res.ok) { toast("error", (res.data && res.data.message) || "Couldn't delete item"); return; }
+  toast("success", "Item deleted");
+  await loadMenu();
+  renderMgmtTable();
+};
+
+async function saveNewItem() {
+  const name = document.getElementById("newItemName").value.trim();
+  const price = parseFloat(document.getElementById("newItemPrice").value);
+  const category_id = parseInt(document.getElementById("newItemCategory").value, 10);
+  const description = document.getElementById("newItemDesc").value.trim();
+  const image_key = document.getElementById("newItemIconGrid").dataset.selected || "default";
+
+  if (!name || !price || price <= 0 || !category_id) {
+    toast("error", "Enter a name, category, and a valid price");
+    return;
+  }
+  const res = await api("/menu/items", {
+    method: "POST",
+    body: JSON.stringify({ name, price, category_id, description, image_key }),
+  });
+  if (!res.ok) { toast("error", (res.data && res.data.error) || "Couldn't add item"); return; }
+  toast("success", `${name} added to the menu`);
+  document.getElementById("addItemForm").classList.remove("open");
+  document.getElementById("newItemName").value = "";
+  document.getElementById("newItemPrice").value = "";
+  document.getElementById("newItemDesc").value = "";
+  await loadMenu();
+  populateCategoryDropdown();
+  renderMgmtTable();
+}
+
 /* ══════════════════════════════════════════════════
    VIEW SWITCHING
 ══════════════════════════════════════════════════ */
 function switchView(view) {
+  if ((view === "reports" || view === "history" || view === "menu") && portalMode !== "owner") return;
   activeView = view;
 
-  const posEls = [document.getElementById("sidebar"), document.getElementById("menuArea")];
-  posEls.forEach(el => el.style.display = view === "pos" ? "" : "none");
+  const posOnlyEls = [
+    document.getElementById("sidebar"),
+    document.getElementById("menuArea"),
+    document.querySelector(".order-panel"),
+  ];
+  posOnlyEls.forEach(el => { el.style.display = view === "pos" ? "" : "none"; });
 
   document.getElementById("reportsView").classList.toggle("active", view === "reports");
   document.getElementById("historyView").classList.toggle("active", view === "history");
+  document.getElementById("menuMgmtView").classList.toggle("active", view === "menu");
 
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
 
   if (view === "reports") loadReports(currentPeriod);
   if (view === "history") loadHistory(1);
+  if (view === "menu") loadMenuMgmt();
+}
+
+/* ══════════════════════════════════════════════════
+   TABLE SELECT
+══════════════════════════════════════════════════ */
+function populateTableSelect() {
+  const sel = document.getElementById("tableInput");
+  sel.innerHTML = Array.from({ length: 10 }, (_, i) => `<option value="T${i+1}">Table ${i+1}</option>`).join("");
 }
 
 /* ══════════════════════════════════════════════════
    EVENT WIRING
 ══════════════════════════════════════════════════ */
+document.getElementById("pickCustomer").addEventListener("click", enterCustomerPortal);
+document.getElementById("pickOwner").addEventListener("click", showOwnerLogin);
+document.getElementById("backToLanding").addEventListener("click", showLanding);
+document.getElementById("exitPortalBtn").addEventListener("click", showLanding);
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  ownerToken = null;
+  localStorage.removeItem("bcOwnerToken");
+  showLanding();
+});
+document.getElementById("ownerLoginBtn").addEventListener("click", attemptOwnerLogin);
+document.getElementById("ownerPasswordInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") attemptOwnerLogin();
+});
+
 document.querySelectorAll(".tab-btn").forEach(btn =>
   btn.addEventListener("click", () => switchView(btn.dataset.view))
 );
@@ -1229,12 +2195,63 @@ document.getElementById("searchBox").addEventListener("input", e => {
 
 document.getElementById("discountInput").addEventListener("input", renderCart);
 document.getElementById("clearBtn").addEventListener("click", clearCart);
-document.getElementById("billBtn").addEventListener("click", () => placeOrder("billed"));
-document.getElementById("payBtn").addEventListener("click",  () => placeOrder("paid"));
 
-document.getElementById("receiptModal").addEventListener("click", function(e) {
+document.getElementById("placeOrderBtn").addEventListener("click", () => {
+  if (!Object.keys(cart).length) return;
+  if (checkoutStep !== "choosing") {
+    checkoutStep = "choosing";
+    document.getElementById("payMethods").style.display = "grid";
+    updatePlaceOrderButton();
+    return;
+  }
+  if (!selectedPaymentMethod) return;
+  placeOrder(selectedPaymentMethod);
+});
+
+document.querySelectorAll(".pay-method-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    selectedPaymentMethod = btn.dataset.method;
+    document.querySelectorAll(".pay-method-btn").forEach(b => b.classList.toggle("active", b === btn));
+    updatePlaceOrderButton();
+  });
+});
+
+document.getElementById("receiptModal").addEventListener("click", function (e) {
   if (e.target === this) closeReceipt();
 });
+
+document.getElementById("historySortSelect").addEventListener("change", e => {
+  histSort = e.target.value;
+  loadHistory(1);
+});
+document.getElementById("dateFilterBtn").addEventListener("click", toggleCalendar);
+document.getElementById("dateClearX").addEventListener("click", clearDateFilter);
+document.getElementById("calPrev").addEventListener("click", () => {
+  calViewMonth--; if (calViewMonth < 0) { calViewMonth = 11; calViewYear--; }
+  renderCalendar();
+});
+document.getElementById("calNext").addEventListener("click", () => {
+  calViewMonth++; if (calViewMonth > 11) { calViewMonth = 0; calViewYear++; }
+  renderCalendar();
+});
+document.addEventListener("click", e => {
+  const pop = document.getElementById("calendarPop");
+  const btn = document.getElementById("dateFilterBtn");
+  if (pop.classList.contains("open") && !pop.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+    pop.classList.remove("open");
+  }
+});
+
+document.getElementById("toggleAddItemBtn").addEventListener("click", () => {
+  const form = document.getElementById("addItemForm");
+  const opening = !form.classList.contains("open");
+  form.classList.toggle("open", opening);
+  if (opening) populateIconPicker();
+});
+document.getElementById("cancelAddItemBtn").addEventListener("click", () => {
+  document.getElementById("addItemForm").classList.remove("open");
+});
+document.getElementById("saveNewItemBtn").addEventListener("click", saveNewItem);
 
 // expose globals needed by inline onclick handlers
 window.addToCart       = addToCart;
@@ -1247,8 +2264,24 @@ window.loadHistory     = loadHistory;
 /* ══════════════════════════════════════════════════
    INIT
 ══════════════════════════════════════════════════ */
-renderCart();
-loadMenu();
+(async function init() {
+  populateTableSelect();
+  renderCart();
+  await loadMenu();
+
+  const hash = location.hash.replace("#", "");
+
+  if (ownerToken) {
+    const res = await api("/owner/verify");
+    if (res.ok) { enterOwnerPortal(); return; }
+    ownerToken = null;
+    localStorage.removeItem("bcOwnerToken");
+  }
+  if (hash === "owner") { showOwnerLogin(); return; }
+  if (hash === "customer") { enterCustomerPortal(); return; }
+  showLanding();
+})();
+
 </script>
 </body>
 </html>
