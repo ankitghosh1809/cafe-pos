@@ -1422,7 +1422,7 @@
 /* ══════════════════════════════════════════════════
    CONFIG
 ══════════════════════════════════════════════════ */
-const API = "/api";
+const API = (location.protocol === "file:") ? "http://localhost:5001/api" : "/api";
 const CACHE_TTL = 20000; // reports/history reuse a cached response for 20s so
                           // flipping between tabs doesn't re-hit the network
                           // every time
