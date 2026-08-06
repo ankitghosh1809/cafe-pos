@@ -1040,6 +1040,81 @@
     .icon-pick-opt { width: 30px; height: 30px; border-radius: 6px; cursor: pointer; border: 1.5px solid transparent; padding: 2px; }
     .icon-pick-opt.selected { border-color: var(--amber); background: rgba(232,164,74,.15); }
   </style>
+  <style>
+    /* ══════════════════════════════════════════════════
+       ROUND 2: server badge, tabs, discount requests, reviews
+    ══════════════════════════════════════════════════ */
+    .server-badge {
+      font-size: .72rem; color: var(--muted); display: flex; align-items: center; gap: 5px;
+      padding: 5px 10px; background: rgba(255,255,255,.06); border-radius: 999px; white-space: nowrap;
+    }
+    .server-badge b { color: var(--cream); font-weight: 600; }
+
+    /* table status strip (owner Order view) */
+    .table-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .table-chip {
+      padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--border); background: white;
+      font-size: .74rem; cursor: pointer; min-width: 76px; text-align: center; transition: all .15s;
+    }
+    .table-chip.occupied { border-color: var(--amber); background: rgba(232,164,74,.08); }
+    .table-chip:hover { transform: translateY(-2px); box-shadow: var(--shadow-s); }
+    .table-chip .tc-no { font-weight: 700; color: var(--roast); display: block; }
+    .table-chip .tc-amt { color: var(--muted); font-size: .68rem; }
+
+    /* pay bill panel (customer + owner) */
+    .bill-panel { background: white; border-radius: var(--r-lg); padding: 20px; margin-top: 12px; }
+    .bill-row { display: flex; justify-content: space-between; font-size: .84rem; padding: 5px 0; color: var(--text); }
+    .bill-row.grand { font-weight: 700; font-size: 1.05rem; border-top: 1px solid var(--border); margin-top: 8px; padding-top: 10px; }
+    .bill-row.discount { color: var(--sage); }
+    .discount-box {
+      margin: 12px 0; padding: 12px; border-radius: var(--r); background: rgba(122,158,126,.08);
+      border: 1px dashed var(--sage); font-size: .8rem;
+    }
+    .discount-box.pending { background: rgba(232,164,74,.08); border-color: var(--amber); }
+    .discount-box.denied { background: rgba(212,112,106,.08); border-color: var(--blush); }
+    .link-btn { background: none; border: none; color: var(--latte); font-size: .78rem; font-weight: 600; cursor: pointer; text-decoration: underline; padding: 0; }
+    .link-btn:hover { color: var(--roast); }
+    .tiny-input { width: 70px; padding: 6px 8px; border: 1.5px solid var(--border); border-radius: 6px; font-family: inherit; font-size: .8rem; }
+
+    /* discount requests (owner) */
+    .req-card {
+      background: white; border-radius: var(--r); border: 1px solid var(--border); padding: 16px;
+      margin-bottom: 12px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .req-info { flex: 1; min-width: 180px; }
+    .req-table { font-weight: 700; color: var(--roast); font-family: 'Playfair Display', serif; }
+    .req-amount { font-size: .8rem; color: var(--muted); }
+    .req-actions { display: flex; gap: 8px; align-items: center; }
+    .tab-badge {
+      background: var(--blush); color: white; font-size: .64rem; font-weight: 700; border-radius: 999px;
+      padding: 1px 6px; margin-left: 4px; vertical-align: middle;
+    }
+
+    /* star ratings */
+    .star-row { display: flex; gap: 4px; margin: 6px 0 14px; }
+    .star-btn { font-size: 1.6rem; background: none; border: none; cursor: pointer; color: var(--border); transition: color .15s, transform .1s; line-height: 1; padding: 2px; }
+    .star-btn.on { color: var(--amber); }
+    .star-btn:hover { transform: scale(1.15); }
+    .review-modal-body { padding: 22px 26px 26px; }
+    .review-skip { text-align: center; margin-top: 6px; }
+
+    /* owner: tables & servers panel */
+    .tables-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 10px; }
+    .table-server-card { background: white; border: 1px solid var(--border); border-radius: var(--r); padding: 12px; }
+    .table-server-card .tsc-no { font-weight: 700; color: var(--roast); font-size: .85rem; margin-bottom: 6px; }
+    .table-server-card input {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 6px; padding: 6px 8px; font-family: inherit; font-size: .8rem;
+    }
+
+    /* owner: reviews panel */
+    .review-row { padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .review-row:last-child { border-bottom: none; }
+    .review-meta { font-size: .74rem; color: var(--muted); display: flex; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+    .review-stars { color: var(--amber); font-size: .8rem; }
+    .review-comment { font-size: .84rem; color: var(--text); }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 26px 0; }
+    .subsection-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--roast); margin-bottom: 12px; }
+  </style>
 </head>
 <body>
 
@@ -1283,9 +1358,11 @@
       <button class="tab-btn" data-view="menu" id="menuTabBtn" style="display:none;">🧾  Menu</button>
       <button class="tab-btn" data-view="reports" id="reportsTabBtn" style="display:none;">📊  Reports</button>
       <button class="tab-btn" data-view="history" id="historyTabBtn" style="display:none;">🗃  History</button>
+      <button class="tab-btn" data-view="requests" id="requestsTabBtn" style="display:none;">🔔  Requests<span class="tab-badge" id="requestsBadge" style="display:none;">0</span></button>
     </div>
 
     <div class="topbar-info">
+      <span class="server-badge" id="serverBadge" style="display:none;">🧑‍🍳 <b id="serverBadgeName">—</b></span>
       <span class="owner-chip" id="ownerChip" style="display:none;">Owner</span>
       <span style="color:var(--muted);font-size:.75rem;">Table</span>
       <select class="table-input" id="tableInput"></select>
@@ -1298,6 +1375,7 @@
   <nav class="sidebar" id="sidebar"></nav>
 
   <main class="menu-area" id="menuArea">
+    <div class="table-strip" id="tableStrip" style="display:none;"></div>
     <div class="search-row">
       <input class="search-box" id="searchBox" placeholder="Search menu items…" />
     </div>
@@ -1316,20 +1394,16 @@
       </div>
     </div>
     <div class="order-footer">
-      <div class="discount-row">
-        <label>Discount (₹)</label>
+      <div class="discount-row" id="ownerDiscountRow" style="display:none;">
+        <label>Direct Discount (₹)</label>
         <input class="discount-input" id="discountInput" type="number" min="0" step="0.5" placeholder="0.00" />
       </div>
-      <div class="totals" id="totalsBox"></div>
-      <div class="pay-methods" id="payMethods" style="display:none;">
-        <button class="pay-method-btn" data-method="cash"><span class="pm-icon">💵</span>Cash</button>
-        <button class="pay-method-btn" data-method="card"><span class="pm-icon">💳</span>Card</button>
-        <button class="pay-method-btn" data-method="upi"><span class="pm-icon">📱</span>UPI</button>
-      </div>
+      <div class="totals" id="totalsBox" style="display:none;"></div>
       <div class="action-btns">
         <button class="btn btn-outline" id="clearBtn">Clear</button>
         <button class="btn btn-amber" id="placeOrderBtn" disabled style="flex:1;">Place Order</button>
       </div>
+      <button class="btn btn-primary" id="payBillBtn" style="width:100%;margin-top:10px;justify-content:center;">🧾 View Bill &amp; Pay</button>
     </div>
   </aside>
 
@@ -1343,6 +1417,10 @@
       <button class="period-btn" data-period="month">Last 30 Days</button>
     </div>
     <div id="reportsContent"><div class="loader">Loading…</div></div>
+
+    <hr class="section-divider" />
+    <div class="subsection-title">Customer Reviews</div>
+    <div id="reviewsContent"><div class="loader">Loading…</div></div>
   </section>
 
   <!-- ── History view ───────────────────────── -->
@@ -1405,8 +1483,29 @@
       </div>
     </div>
     <div class="mgmt-table-wrap" id="mgmtTableWrap"></div>
+
+    <hr class="section-divider" />
+    <div class="subsection-title">Tables &amp; Servers</div>
+    <div class="tables-grid" id="tablesServersGrid"></div>
   </section>
 
+  <!-- ── Discount Requests view (owner only) ───── -->
+  <section class="view-area" id="requestsView">
+    <div class="view-title">Discount Requests</div>
+    <div class="view-sub">Approve or decline discounts customers have asked for</div>
+    <div id="requestsContent"><div class="loader">Loading…</div></div>
+  </section>
+
+</div>
+
+<!-- ── Bill / Pay Modal ───────────────────────── -->
+<div class="modal-backdrop" id="billModal">
+  <div class="receipt" id="billModalCard" style="max-width:420px;"></div>
+</div>
+
+<!-- ── Review Modal ───────────────────────────── -->
+<div class="modal-backdrop" id="reviewModal">
+  <div class="receipt" id="reviewModalCard" style="max-width:380px;"></div>
 </div>
 
 <!-- ── Receipt Modal ─────────────────────────── -->
@@ -1418,33 +1517,40 @@
 <div class="toast-container" id="toasts"></div>
 
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 /* ══════════════════════════════════════════════════
    CONFIG
 ══════════════════════════════════════════════════ */
-const API = (location.protocol === "file:") ? "http://localhost:5001/api" : "/api";
-const CACHE_TTL = 20000; // reports/history reuse a cached response for 20s so
-                          // flipping between tabs doesn't re-hit the network
-                          // every time
+const API = (location.protocol === "file:") ? "http://localhost:5000/api" : "/api";
+const CACHE_TTL = 20000;
+const RAZORPAY_KEY_ID = "rzp_test_TLgpiMnkv0Bm4D";
 
 /* ══════════════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════════ */
-let menuData    = [];       // categories + items from API
-let cart        = {};       // { item_id: { item, qty } }
+let menuData    = [];
+let carts       = {};       // { "T1": { itemId: {item, qty} }, "T2": {...}, ... } — per-table, unsent round
+let currentTable = "T1";
+let serverMap   = {};       // { "T1": "Rahul", ... }
 let activeView  = "pos";
 let activeCat   = null;
 let searchQ     = "";
 let currentPeriod = "today";
 let histPage    = 1;
 let histSort    = "desc";
-let selectedDate = null;    // YYYY-MM-DD or null (history calendar filter)
+let selectedDate = null;
 let calViewYear, calViewMonth;
 let ownerToken  = localStorage.getItem("bcOwnerToken") || null;
 let portalMode  = null;     // "customer" | "owner"
-let checkoutStep = "idle";  // "idle" | "choosing"
-let selectedPaymentMethod = null;
-const _cache = {};          // lightweight TTL cache for reports/history
+const _cache = {};
+
+// Bill/Pay modal state
+let billTable = null;
+let billOrder = null;        // last-fetched open order for billTable
+let billPaymentMethod = null;
+let discountPollTimer = null;
+let lastPaidOrderId = null;  // used to attach the post-payment review to an order
 
 /* ══════════════════════════════════════════════════
    UTILS
@@ -1487,12 +1593,17 @@ function iconSvg(key, cls) {
   return `<svg class="${cls}"><use href="#icon-${key || 'default'}"/></svg>`;
 }
 
+function cartFor(tableNo) {
+  if (!carts[tableNo]) carts[tableNo] = {};
+  return carts[tableNo];
+}
+
 /* ══════════════════════════════════════════════════
    PORTAL / AUTH
 ══════════════════════════════════════════════════ */
 function showLanding() {
   portalMode = null;
-  cart = {};
+  stopDiscountPoll();
   document.getElementById("landingScreen").style.display = "flex";
   document.getElementById("ownerLoginScreen").style.display = "none";
   document.getElementById("appRoot").style.display = "none";
@@ -1512,16 +1623,28 @@ function showOwnerLogin() {
   }, 50);
 }
 
+function applyPortalChrome() {
+  const isOwner = portalMode === "owner";
+  document.getElementById("ownerChip").style.display = isOwner ? "" : "none";
+  document.getElementById("logoutBtn").style.display = isOwner ? "" : "none";
+  ["menuTabBtn", "reportsTabBtn", "historyTabBtn", "requestsTabBtn"].forEach(id => {
+    document.getElementById(id).style.display = isOwner ? "" : "none";
+  });
+  document.getElementById("ownerDiscountRow").style.display = isOwner ? "" : "none";
+  document.getElementById("totalsBox").style.display = isOwner ? "" : "none";
+  document.getElementById("tableStrip").style.display = isOwner ? "flex" : "none";
+  if (isOwner) {
+    refreshTableStrip();
+    refreshRequestsBadge();
+  }
+}
+
 function enterCustomerPortal() {
   portalMode = "customer";
   document.getElementById("landingScreen").style.display = "none";
   document.getElementById("ownerLoginScreen").style.display = "none";
   document.getElementById("appRoot").style.display = "grid";
-  document.getElementById("ownerChip").style.display = "none";
-  document.getElementById("logoutBtn").style.display = "none";
-  ["menuTabBtn", "reportsTabBtn", "historyTabBtn"].forEach(id => {
-    document.getElementById(id).style.display = "none";
-  });
+  applyPortalChrome();
   location.hash = "customer";
   switchView("pos");
 }
@@ -1531,11 +1654,7 @@ function enterOwnerPortal() {
   document.getElementById("landingScreen").style.display = "none";
   document.getElementById("ownerLoginScreen").style.display = "none";
   document.getElementById("appRoot").style.display = "grid";
-  document.getElementById("ownerChip").style.display = "";
-  document.getElementById("logoutBtn").style.display = "";
-  ["menuTabBtn", "reportsTabBtn", "historyTabBtn"].forEach(id => {
-    document.getElementById(id).style.display = "";
-  });
+  applyPortalChrome();
   location.hash = "owner";
   switchView("pos");
 }
@@ -1561,6 +1680,51 @@ async function attemptOwnerLogin() {
   localStorage.setItem("bcOwnerToken", ownerToken);
   toast("success", "Logged in as owner");
   enterOwnerPortal();
+}
+
+/* ══════════════════════════════════════════════════
+   TABLES / SERVERS
+══════════════════════════════════════════════════ */
+async function loadTables() {
+  const res = await api("/tables");
+  if (!res.ok) return;
+  serverMap = {};
+  res.data.forEach(t => { serverMap[t.table_no] = t.server_name; });
+  updateServerBadge();
+}
+
+function updateServerBadge() {
+  const badge = document.getElementById("serverBadge");
+  const name = serverMap[currentTable];
+  if (!name) { badge.style.display = "none"; return; }
+  document.getElementById("serverBadgeName").textContent = name;
+  badge.style.display = "";
+}
+
+function populateTableSelect() {
+  const sel = document.getElementById("tableInput");
+  sel.innerHTML = Array.from({ length: 10 }, (_, i) => `<option value="T${i+1}">Table ${i+1}</option>`).join("");
+  sel.value = currentTable;
+}
+
+function switchTable(tableNo) {
+  currentTable = tableNo;
+  document.getElementById("tableInput").value = tableNo;
+  updateServerBadge();
+  renderCart();
+}
+
+async function refreshTableStrip() {
+  const strip = document.getElementById("tableStrip");
+  if (portalMode !== "owner") return;
+  const res = await api("/tables/status");
+  if (!res.ok) return;
+  strip.innerHTML = res.data.map(t => `
+    <div class="table-chip ${t.has_open_tab ? "occupied" : ""}" onclick="switchTable('${t.table_no}')">
+      <span class="tc-no">${t.table_no}</span>
+      <span class="tc-amt">${t.has_open_tab ? fmt(t.total) : t.server_name}</span>
+    </div>
+  `).join("");
 }
 
 /* ══════════════════════════════════════════════════
@@ -1627,17 +1791,19 @@ function renderMenu() {
 }
 
 /* ══════════════════════════════════════════════════
-   CART
+   CART  (per table — the current, not-yet-sent round)
 ══════════════════════════════════════════════════ */
 function addToCart(id) {
   const item = window._itemMap[id];
   if (!item) return;
+  const cart = cartFor(currentTable);
   if (cart[id]) cart[id].qty++;
   else cart[id] = { item, qty: 1 };
   renderCart();
 }
 
 function updateQty(id, delta) {
+  const cart = cartFor(currentTable);
   if (!cart[id]) return;
   cart[id].qty += delta;
   if (cart[id].qty <= 0) delete cart[id];
@@ -1645,18 +1811,18 @@ function updateQty(id, delta) {
 }
 
 function removeFromCart(id) {
-  delete cart[id];
+  delete cartFor(currentTable)[id];
   renderCart();
 }
 
 function clearCart() {
-  cart = {};
+  carts[currentTable] = {};
   document.getElementById("discountInput").value = "";
-  resetCheckoutFlow();
   renderCart();
 }
 
 function renderCart() {
+  const cart = cartFor(currentTable);
   const entries = Object.values(cart);
   const countEl = document.getElementById("itemCount");
   const listEl  = document.getElementById("orderItems");
@@ -1686,85 +1852,239 @@ function renderCart() {
     `).join("");
   }
 
-  const discount = parseFloat(document.getElementById("discountInput").value) || 0;
-  const sub      = total;
-  const tax      = sub * 0.05;
-  const grand    = Math.max(0, sub + tax - discount);
+  // Totals box only matters for the owner (customer never sees a running
+  // total while ordering — only at Pay Bill time).
+  if (portalMode === "owner") {
+    const discount = parseFloat(document.getElementById("discountInput").value) || 0;
+    const tax = total * 0.05;
+    const grand = Math.max(0, total + tax - discount);
+    document.getElementById("totalsBox").innerHTML = `
+      <div class="totals-row"><span>This round's subtotal</span><span>${fmt(total)}</span></div>
+      <div class="totals-row"><span>GST (5%)</span><span>${fmt(tax)}</span></div>
+      ${discount ? `<div class="totals-row"><span>Discount</span><span>− ${fmt(discount)}</span></div>` : ""}
+      <div class="totals-row total"><span>Round total</span><span>${fmt(grand)}</span></div>
+    `;
+  }
 
-  document.getElementById("totalsBox").innerHTML = `
-    <div class="totals-row"><span>Subtotal</span><span>${fmt(sub)}</span></div>
-    <div class="totals-row"><span>GST (5%)</span><span>${fmt(tax)}</span></div>
-    ${discount ? `<div class="totals-row"><span>Discount</span><span>− ${fmt(discount)}</span></div>` : ""}
-    <div class="totals-row total"><span>Total</span><span>${fmt(grand)}</span></div>
-  `;
-
-  updatePlaceOrderButton();
+  document.getElementById("placeOrderBtn").disabled = entries.length === 0;
 }
 
 /* ══════════════════════════════════════════════════
-   CHECKOUT — merged bill + place order + payment
+   PLACE ORDER — send the current round to the table's tab
+   (no payment, no total shown to the customer)
 ══════════════════════════════════════════════════ */
-function updatePlaceOrderButton() {
-  const btn = document.getElementById("placeOrderBtn");
-  const hasItems = Object.keys(cart).length > 0;
-  if (checkoutStep === "choosing") {
-    btn.textContent = selectedPaymentMethod ? "Confirm & Place Order" : "Choose a payment method ↑";
-    btn.disabled = !selectedPaymentMethod;
-  } else {
-    btn.textContent = "Place Order";
-    btn.disabled = !hasItems;
-  }
-}
-
-function resetCheckoutFlow() {
-  checkoutStep = "idle";
-  selectedPaymentMethod = null;
-  const pm = document.getElementById("payMethods");
-  if (pm) pm.style.display = "none";
-  document.querySelectorAll(".pay-method-btn").forEach(b => b.classList.remove("active"));
-  updatePlaceOrderButton();
-}
-
-async function placeOrder(paymentMethod) {
+async function placeOrder() {
+  const cart = cartFor(currentTable);
   const entries = Object.values(cart);
   if (!entries.length) return;
 
-  const discount = parseFloat(document.getElementById("discountInput").value) || 0;
-  const table    = document.getElementById("tableInput").value || "T1";
-
   const payload = {
-    table_no: table,
-    discount,
-    payment_method: paymentMethod,
-    items: entries.map(e => ({
-      item_id:    e.item.id,
-      quantity:   e.qty,
-      unit_price: e.item.price,
-    })),
+    items: entries.map(e => ({ item_id: e.item.id, quantity: e.qty, unit_price: e.item.price })),
   };
-
   const btn = document.getElementById("placeOrderBtn");
   btn.disabled = true;
-  const res = await api("/orders", { method: "POST", body: JSON.stringify(payload) });
+  const res = await api(`/tables/${currentTable}/items`, { method: "POST", body: JSON.stringify(payload) });
   if (!res.ok) {
-    toast("error", (res.data && (res.data.error || res.data.message)) || "Couldn't place order");
-    updatePlaceOrderButton();
+    toast("error", (res.data && res.data.error) || "Couldn't send your order");
+    document.getElementById("placeOrderBtn").disabled = false;
+    return;
+  }
+  toast("success", `Order sent for ${currentTable}!`);
+  invalidateHistoryCache();
+  clearCart();
+  if (portalMode === "owner") refreshTableStrip();
+}
+
+/* ══════════════════════════════════════════════════
+   BILL / PAY  (fetches the real server-side tab; this is the
+   only place the customer ever sees a total)
+══════════════════════════════════════════════════ */
+async function openBillModal() {
+  billTable = currentTable;
+  billPaymentMethod = null;
+  const res = await api(`/tables/${billTable}/tab`);
+  if (!res.ok) { toast("error", "Couldn't load the bill"); return; }
+  billOrder = res.data.order;
+  renderBillModal();
+  document.getElementById("billModal").classList.add("open");
+  if (portalMode === "customer") startDiscountPoll();
+}
+
+function closeBillModal() {
+  document.getElementById("billModal").classList.remove("open");
+  stopDiscountPoll();
+}
+
+function renderBillModal() {
+  const card = document.getElementById("billModalCard");
+  if (!billOrder || !billOrder.items || !billOrder.items.length) {
+    card.innerHTML = `
+      <div class="receipt-header"><div class="receipt-cafe">Brew &amp; Co.</div></div>
+      <div class="receipt-body" style="text-align:center;color:var(--muted);padding:30px 10px;">
+        Nothing to pay yet for ${billTable} — place an order first.
+      </div>
+      <div class="receipt-actions"><button class="btn btn-outline" style="flex:1" onclick="closeBillModal()">Close</button></div>
+    `;
     return;
   }
 
-  const order = res.data;
-  toast("success", `Order #${order.id} placed for ${table}`);
+  const isOwner = portalMode === "owner";
+  const methods = isOwner
+    ? [["cash","💵","Cash"],["card","💳","Card"],["upi","📱","UPI"],["online","🌐","Online"]]
+    : [["cash","💵","Cash"],["online","🌐","Online"]];
+
+  card.innerHTML = `
+    <div class="receipt-header">
+      <div class="receipt-cafe">Brew &amp; Co.</div>
+      <div class="receipt-addr">Table ${billTable}${serverMap[billTable] ? " · Server: " + serverMap[billTable] : ""}</div>
+    </div>
+    <div class="bill-panel">
+      <div class="receipt-items">
+        ${billOrder.items.map(it => `<div class="ri-row"><span>${it.name} × ${it.quantity}</span><span>${fmt(it.line_total)}</span></div>`).join("")}
+      </div>
+      <div class="bill-row"><span>Subtotal</span><span>${fmt(billOrder.subtotal)}</span></div>
+      <div class="bill-row"><span>GST (5%)</span><span>${fmt(billOrder.tax)}</span></div>
+      ${billOrder.discount > 0 ? `<div class="bill-row discount"><span>Discount (${billOrder.discount_percent}%)</span><span>− ${fmt(billOrder.discount)}</span></div>` : ""}
+      <div class="bill-row grand"><span>Total</span><span>${fmt(billOrder.total)}</span></div>
+
+      <div id="discountSection"></div>
+
+      <div class="pay-methods" style="display:grid;margin-top:16px;">
+        ${methods.map(([val,icon,label]) => `<button class="pay-method-btn" data-method="${val}" onclick="selectBillPaymentMethod('${val}')"><span class="pm-icon">${icon}</span>${label}</button>`).join("")}
+      </div>
+      ${isOwner ? `
+        <div class="discount-row" style="margin-top:14px;">
+          <label>Apply direct discount (%)</label>
+          <input class="tiny-input" id="ownerDirectPct" type="number" min="0" max="100" step="1" placeholder="0" />
+        </div>
+        <button class="link-btn" onclick="applyOwnerDirectDiscount()">Apply</button>
+      ` : ""}
+    </div>
+    <div class="receipt-actions">
+      <button class="btn btn-outline" style="flex:1" onclick="closeBillModal()">Close</button>
+      <button class="btn btn-primary" style="flex:1" id="confirmPayBtn" disabled onclick="confirmPay()">Pay ${fmt(billOrder.total)}</button>
+    </div>
+  `;
+  renderDiscountSection();
+}
+
+function selectBillPaymentMethod(method) {
+  billPaymentMethod = method;
+  document.querySelectorAll(".pay-method-btn").forEach(b => b.classList.toggle("active", b.dataset.method === method));
+  document.getElementById("confirmPayBtn").disabled = false;
+}
+
+async function applyOwnerDirectDiscount() {
+  const pct = parseFloat(document.getElementById("ownerDirectPct").value);
+  if (!pct || pct <= 0 || pct > 100) { toast("error", "Enter a discount percent between 1 and 100"); return; }
+  // Owner applies directly via the same request+approve pipeline, resolved instantly
+  const reqRes = await api(`/tables/${billTable}/discount-request`, { method: "POST", body: JSON.stringify({}) });
+  if (!reqRes.ok) { toast("error", (reqRes.data && reqRes.data.error) || "Couldn't apply discount"); return; }
+  const approveRes = await api(`/discount-requests/${reqRes.data.id}/resolve`, {
+    method: "POST", body: JSON.stringify({ action: "approve", discount_percent: pct }),
+  });
+  if (!approveRes.ok) { toast("error", "Couldn't apply discount"); return; }
+  toast("success", `${pct}% discount applied`);
+  const res = await api(`/tables/${billTable}/tab`);
+  billOrder = res.data.order;
+  renderBillModal();
+}
+
+/* ── discount request UI (customer side) + polling ─────────────────── */
+async function renderDiscountSection() {
+  const el = document.getElementById("discountSection");
+  if (!el || portalMode !== "customer") { if (el) el.innerHTML = ""; return; }
+  const res = await api(`/tables/${billTable}/discount-status`);
+  const status = res.ok ? res.data.status : "none";
+
+  if (status === "pending") {
+    el.innerHTML = `<div class="discount-box pending">⏳ Discount request sent — waiting for the owner to respond…</div>`;
+  } else if (status === "approved") {
+    el.innerHTML = `<div class="discount-box">🎉 ${res.data.discount_percent}% discount approved! It's reflected in your total above.</div>`;
+    stopDiscountPoll();
+  } else if (status === "denied") {
+    el.innerHTML = `<div class="discount-box denied">Your discount request was declined. You can still pay the full amount.</div>`;
+  } else {
+    el.innerHTML = `<button class="link-btn" onclick="requestDiscount()">Request a discount</button>`;
+  }
+}
+
+async function requestDiscount() {
+  const res = await api(`/tables/${billTable}/discount-request`, { method: "POST", body: JSON.stringify({}) });
+  if (!res.ok) { toast("error", (res.data && res.data.error) || "Couldn't request a discount"); return; }
+  toast("success", "Discount requested — hang tight!");
+  startDiscountPoll();
+  renderDiscountSection();
+}
+
+function startDiscountPoll() {
+  stopDiscountPoll();
+  discountPollTimer = setInterval(async () => {
+    if (!document.getElementById("billModal").classList.contains("open")) { stopDiscountPoll(); return; }
+    const res = await api(`/tables/${billTable}/tab`);
+    if (res.ok && res.data.order) {
+      const prevTotal = billOrder ? billOrder.total : null;
+      billOrder = res.data.order;
+      if (prevTotal !== null && billOrder.total !== prevTotal) renderBillModal();
+      else renderDiscountSection();
+    }
+  }, 4000);
+}
+function stopDiscountPoll() {
+  if (discountPollTimer) { clearInterval(discountPollTimer); discountPollTimer = null; }
+}
+
+/* ── confirm payment (cash / card / upi / online-via-Razorpay) ──────── */
+function confirmPay() {
+  if (!billPaymentMethod) return;
+  if (billPaymentMethod === "online") {
+    payViaRazorpay();
+  } else {
+    settleTab(billPaymentMethod, null);
+  }
+}
+
+function payViaRazorpay() {
+  if (typeof Razorpay === "undefined") {
+    toast("error", "Payment gateway didn't load — check your connection and try again");
+    return;
+  }
+  const options = {
+    key: RAZORPAY_KEY_ID,
+    amount: Math.round(billOrder.total * 100), // paise
+    currency: "INR",
+    name: "Brew & Co.",
+    description: `${billTable} bill`,
+    handler: function (response) {
+      settleTab("online", response.razorpay_payment_id);
+    },
+    theme: { color: "#3b1f12" },
+    modal: { ondismiss: function () { toast("error", "Payment cancelled"); } },
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+async function settleTab(method, paymentRef) {
+  const res = await api(`/tables/${billTable}/pay`, {
+    method: "POST",
+    body: JSON.stringify({ payment_method: method, payment_ref: paymentRef }),
+  });
+  if (!res.ok) { toast("error", (res.data && res.data.error) || "Payment failed"); return; }
+  lastPaidOrderId = res.data.id;
+  toast("success", `${billTable} paid!`);
   invalidateHistoryCache();
-  clearCart();
-  showReceipt(order.id);
+  closeBillModal();
+  if (portalMode === "owner") refreshTableStrip();
+  showReceipt(res.data.id, portalMode === "customer");
 }
 
 /* ══════════════════════════════════════════════════
    RECEIPT
 ══════════════════════════════════════════════════ */
-const PAYMENT_LABELS = { cash: "Cash", card: "Card", upi: "UPI" };
+const PAYMENT_LABELS = { cash: "Cash", card: "Card", upi: "UPI", online: "Online" };
 
-async function showReceipt(orderId) {
+async function showReceipt(orderId, offerReview) {
   const res = await api(`/orders/${orderId}/receipt`);
   if (!res.ok) return;
   const r = res.data.receipt;
@@ -1793,7 +2113,7 @@ async function showReceipt(orderId) {
         <div class="ri-row">
           <span>GST (${r.tax_rate})</span><span>${fmt(r.tax)}</span>
         </div>
-        ${r.discount ? `<div class="ri-row"><span>Discount</span><span>− ${fmt(r.discount)}</span></div>` : ""}
+        ${r.discount ? `<div class="ri-row"><span>Discount (${r.discount_percent}%)</span><span>− ${fmt(r.discount)}</span></div>` : ""}
         <div class="ri-row total-row">
           <span>TOTAL</span><span>${fmt(r.total)}</span>
         </div>
@@ -1801,7 +2121,7 @@ async function showReceipt(orderId) {
       <div class="receipt-thanks">${r.thank_you}</div>
     </div>
     <div class="receipt-actions">
-      <button class="btn btn-outline" style="flex:1" onclick="closeReceipt()">Close</button>
+      <button class="btn btn-outline" style="flex:1" onclick="closeReceipt(${offerReview ? "true" : "false"})">Close</button>
       <button class="btn btn-primary" style="flex:1" onclick="window.print()">Print</button>
     </div>
   `;
@@ -1809,8 +2129,72 @@ async function showReceipt(orderId) {
   document.getElementById("receiptModal").classList.add("open");
 }
 
-function closeReceipt() {
+function closeReceipt(offerReview) {
   document.getElementById("receiptModal").classList.remove("open");
+  if (offerReview) openReviewModal();
+}
+
+/* ══════════════════════════════════════════════════
+   REVIEW  (customer, after paying)
+══════════════════════════════════════════════════ */
+let reviewServerRating = 0;
+let reviewCafeRating = 0;
+
+function starRow(id, current) {
+  return Array.from({ length: 5 }, (_, i) => {
+    const n = i + 1;
+    return `<button class="star-btn ${n <= current ? "on" : ""}" onclick="setStar('${id}',${n})">★</button>`;
+  }).join("");
+}
+
+function setStar(which, n) {
+  if (which === "server") reviewServerRating = n; else reviewCafeRating = n;
+  renderReviewModal();
+}
+
+function openReviewModal() {
+  reviewServerRating = 0;
+  reviewCafeRating = 0;
+  renderReviewModal();
+  document.getElementById("reviewModal").classList.add("open");
+}
+
+function renderReviewModal() {
+  const server = serverMap[billTable] || serverMap[currentTable] || "your server";
+  document.getElementById("reviewModalCard").innerHTML = `
+    <div class="receipt-header"><div class="receipt-cafe">How was it?</div></div>
+    <div class="review-modal-body">
+      <div style="font-size:.85rem;color:var(--muted);margin-bottom:4px;">Rate ${server}</div>
+      <div class="star-row">${starRow("server", reviewServerRating)}</div>
+      <div style="font-size:.85rem;color:var(--muted);margin-bottom:4px;">Rate Brew &amp; Co.</div>
+      <div class="star-row">${starRow("cafe", reviewCafeRating)}</div>
+      <textarea id="reviewComment" placeholder="Anything you'd like to add? (optional)" style="width:100%;min-height:70px;border:1.5px solid var(--border);border-radius:8px;padding:10px;font-family:inherit;font-size:.85rem;resize:vertical;"></textarea>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:14px;" onclick="submitReview()">Submit Review</button>
+      <div class="review-skip"><button class="link-btn" onclick="closeReviewModal()">Skip</button></div>
+    </div>
+  `;
+}
+
+function closeReviewModal() {
+  document.getElementById("reviewModal").classList.remove("open");
+}
+
+async function submitReview() {
+  if (!reviewServerRating && !reviewCafeRating) { toast("error", "Pick at least one rating"); return; }
+  const comment = document.getElementById("reviewComment").value.trim();
+  const res = await api("/reviews", {
+    method: "POST",
+    body: JSON.stringify({
+      table_no: billTable || currentTable,
+      order_id: lastPaidOrderId,
+      server_rating: reviewServerRating || null,
+      cafe_rating: reviewCafeRating || null,
+      comment,
+    }),
+  });
+  if (!res.ok) { toast("error", "Couldn't submit review"); return; }
+  toast("success", "Thanks for the feedback!");
+  closeReviewModal();
 }
 
 /* ══════════════════════════════════════════════════
@@ -1823,13 +2207,14 @@ async function loadReports(period = "today") {
   const cached = _cache[cacheKey];
   if (cached && Date.now() - cached.ts < CACHE_TTL) {
     renderReports(cached.data, period);
-    return;
+  } else {
+    el.innerHTML = `<div class="loader">Loading…</div>`;
+    const res = await api(`/reports/sales?period=${period}`);
+    if (!res.ok) { el.innerHTML = `<div class="loader">Could not load — is the backend running?</div>`; return; }
+    _cache[cacheKey] = { ts: Date.now(), data: res.data };
+    renderReports(res.data, period);
   }
-  el.innerHTML = `<div class="loader">Loading…</div>`;
-  const res = await api(`/reports/sales?period=${period}`);
-  if (!res.ok) { el.innerHTML = `<div class="loader">Could not load — is the backend running?</div>`; return; }
-  _cache[cacheKey] = { ts: Date.now(), data: res.data };
-  renderReports(res.data, period);
+  loadReviewsPanel();
 }
 
 function renderReports(data, period) {
@@ -1888,8 +2273,36 @@ function renderReports(data, period) {
   `;
 }
 
+async function loadReviewsPanel() {
+  const el = document.getElementById("reviewsContent");
+  const res = await api("/reviews");
+  if (!res.ok) { el.innerHTML = `<div class="loader">Could not load reviews</div>`; return; }
+  const { reviews, summary } = res.data;
+  el.innerHTML = `
+    <div class="stats-grid" style="margin-bottom:18px;">
+      <div class="stat-card"><div class="stat-label">Avg Server Rating</div><div class="stat-val">${Number(summary.avg_server).toFixed(1)} ★</div></div>
+      <div class="stat-card"><div class="stat-label">Avg Cafe Rating</div><div class="stat-val">${Number(summary.avg_cafe).toFixed(1)} ★</div></div>
+      <div class="stat-card"><div class="stat-label">Total Reviews</div><div class="stat-val">${summary.total}</div></div>
+    </div>
+    <div class="report-card">
+      ${reviews.length ? reviews.map(r => `
+        <div class="review-row">
+          <div class="review-meta">
+            <span>${r.table_no || "—"}</span>
+            ${r.server_name ? `<span>Server: ${r.server_name}</span>` : ""}
+            <span class="review-stars">${r.server_rating ? "Server " + "★".repeat(r.server_rating) : ""}</span>
+            <span class="review-stars">${r.cafe_rating ? "Cafe " + "★".repeat(r.cafe_rating) : ""}</span>
+            <span>${fmtDate(r.created_at)}</span>
+          </div>
+          ${r.comment ? `<div class="review-comment">"${r.comment}"</div>` : ""}
+        </div>
+      `).join("") : `<div style="font-size:.82rem;color:var(--muted)">No reviews yet</div>`}
+    </div>
+  `;
+}
+
 /* ══════════════════════════════════════════════════
-   HISTORY — date filter, sort, delete
+   HISTORY
 ══════════════════════════════════════════════════ */
 async function loadHistory(page = 1) {
   histPage = page;
@@ -1926,7 +2339,7 @@ function renderHistory(data, page) {
       <td><span class="status-pill status-${o.status}">${o.status}</span></td>
       <td>
         <div class="history-row-actions">
-          <button class="btn btn-outline" style="padding:5px 10px;font-size:.75rem" onclick="showReceipt(${o.id})">Receipt</button>
+          <button class="btn btn-outline" style="padding:5px 10px;font-size:.75rem" onclick="showReceipt(${o.id}, false)">Receipt</button>
           <button class="history-del-btn" title="Delete this order" onclick="confirmDeleteOrder(${o.id})">🗑</button>
         </div>
       </td>
@@ -2029,12 +2442,70 @@ function updateDateFilterUI() {
 }
 
 /* ══════════════════════════════════════════════════
-   OWNER: MENU MANAGEMENT
+   OWNER: DISCOUNT REQUESTS
+══════════════════════════════════════════════════ */
+async function loadRequests() {
+  const el = document.getElementById("requestsContent");
+  el.innerHTML = `<div class="loader">Loading…</div>`;
+  const res = await api("/discount-requests?status=pending");
+  if (!res.ok) { el.innerHTML = `<div class="loader">Could not load requests</div>`; return; }
+  const reqs = res.data;
+  if (!reqs.length) {
+    el.innerHTML = `<div style="text-align:center;color:var(--muted);padding:40px;">No pending discount requests right now.</div>`;
+  } else {
+    el.innerHTML = reqs.map(r => `
+      <div class="req-card">
+        <div class="req-info">
+          <div class="req-table">${r.table_no}</div>
+          <div class="req-amount">Current tab: ${fmt(r.current_subtotal != null ? r.current_subtotal : r.requested_amount)} · requested ${fmtDate(r.created_at)}</div>
+        </div>
+        <div class="req-actions">
+          <input class="tiny-input" id="pct-${r.id}" type="number" min="1" max="100" placeholder="%" />
+          <button class="btn btn-primary" style="padding:8px 14px;" onclick="resolveRequest(${r.id}, 'approve')">Approve</button>
+          <button class="btn btn-outline" style="padding:8px 14px;" onclick="resolveRequest(${r.id}, 'deny')">Deny</button>
+        </div>
+      </div>
+    `).join("");
+  }
+  refreshRequestsBadge();
+}
+
+async function resolveRequest(id, action) {
+  let discount_percent;
+  if (action === "approve") {
+    discount_percent = parseFloat(document.getElementById(`pct-${id}`).value);
+    if (!discount_percent || discount_percent <= 0 || discount_percent > 100) {
+      toast("error", "Enter a discount percent between 1 and 100");
+      return;
+    }
+  }
+  const res = await api(`/discount-requests/${id}/resolve`, {
+    method: "POST",
+    body: JSON.stringify({ action, discount_percent }),
+  });
+  if (!res.ok) { toast("error", (res.data && res.data.error) || "Couldn't resolve request"); return; }
+  toast("success", action === "approve" ? `${discount_percent}% discount approved` : "Request declined");
+  loadRequests();
+}
+
+async function refreshRequestsBadge() {
+  if (portalMode !== "owner") return;
+  const res = await api("/discount-requests?status=pending");
+  const badge = document.getElementById("requestsBadge");
+  if (!res.ok) return;
+  const n = res.data.length;
+  badge.textContent = n;
+  badge.style.display = n > 0 ? "" : "none";
+}
+
+/* ══════════════════════════════════════════════════
+   OWNER: MENU MANAGEMENT + TABLES & SERVERS
 ══════════════════════════════════════════════════ */
 async function loadMenuMgmt() {
   await loadMenu();
   populateCategoryDropdown();
   renderMgmtTable();
+  renderTablesServersGrid();
 }
 
 function populateCategoryDropdown() {
@@ -2126,11 +2597,37 @@ async function saveNewItem() {
   renderMgmtTable();
 }
 
+function renderTablesServersGrid() {
+  const grid = document.getElementById("tablesServersGrid");
+  grid.innerHTML = Array.from({ length: 10 }, (_, i) => {
+    const t = `T${i+1}`;
+    return `
+      <div class="table-server-card">
+        <div class="tsc-no">Table ${i+1}</div>
+        <input value="${serverMap[t] || ""}" placeholder="Server name" id="srv-${t}"
+               onkeydown="if(event.key==='Enter') saveTableServer('${t}')"
+               onblur="saveTableServer('${t}')" />
+      </div>
+    `;
+  }).join("");
+}
+
+async function saveTableServer(tableNo) {
+  const input = document.getElementById(`srv-${tableNo}`);
+  const name = input.value.trim();
+  if (!name || name === serverMap[tableNo]) return;
+  const res = await api(`/tables/${tableNo}/server`, { method: "PUT", body: JSON.stringify({ server_name: name }) });
+  if (!res.ok) { toast("error", "Couldn't save server name"); return; }
+  serverMap[tableNo] = res.data.server_name;
+  toast("success", `${tableNo} → ${res.data.server_name}`);
+  updateServerBadge();
+}
+
 /* ══════════════════════════════════════════════════
    VIEW SWITCHING
 ══════════════════════════════════════════════════ */
 function switchView(view) {
-  if ((view === "reports" || view === "history" || view === "menu") && portalMode !== "owner") return;
+  if ((view === "reports" || view === "history" || view === "menu" || view === "requests") && portalMode !== "owner") return;
   activeView = view;
 
   const posOnlyEls = [
@@ -2143,20 +2640,15 @@ function switchView(view) {
   document.getElementById("reportsView").classList.toggle("active", view === "reports");
   document.getElementById("historyView").classList.toggle("active", view === "history");
   document.getElementById("menuMgmtView").classList.toggle("active", view === "menu");
+  document.getElementById("requestsView").classList.toggle("active", view === "requests");
 
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
 
+  if (view === "pos" && portalMode === "owner") refreshTableStrip();
   if (view === "reports") loadReports(currentPeriod);
   if (view === "history") loadHistory(1);
   if (view === "menu") loadMenuMgmt();
-}
-
-/* ══════════════════════════════════════════════════
-   TABLE SELECT
-══════════════════════════════════════════════════ */
-function populateTableSelect() {
-  const sel = document.getElementById("tableInput");
-  sel.innerHTML = Array.from({ length: 10 }, (_, i) => `<option value="T${i+1}">Table ${i+1}</option>`).join("");
+  if (view === "requests") loadRequests();
 }
 
 /* ══════════════════════════════════════════════════
@@ -2195,29 +2687,20 @@ document.getElementById("searchBox").addEventListener("input", e => {
 
 document.getElementById("discountInput").addEventListener("input", renderCart);
 document.getElementById("clearBtn").addEventListener("click", clearCart);
+document.getElementById("placeOrderBtn").addEventListener("click", placeOrder);
+document.getElementById("payBillBtn").addEventListener("click", openBillModal);
 
-document.getElementById("placeOrderBtn").addEventListener("click", () => {
-  if (!Object.keys(cart).length) return;
-  if (checkoutStep !== "choosing") {
-    checkoutStep = "choosing";
-    document.getElementById("payMethods").style.display = "grid";
-    updatePlaceOrderButton();
-    return;
-  }
-  if (!selectedPaymentMethod) return;
-  placeOrder(selectedPaymentMethod);
-});
-
-document.querySelectorAll(".pay-method-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    selectedPaymentMethod = btn.dataset.method;
-    document.querySelectorAll(".pay-method-btn").forEach(b => b.classList.toggle("active", b === btn));
-    updatePlaceOrderButton();
-  });
-});
+document.getElementById("tableInput").addEventListener("change", e => switchTable(e.target.value));
+window.switchTable = switchTable;
 
 document.getElementById("receiptModal").addEventListener("click", function (e) {
-  if (e.target === this) closeReceipt();
+  if (e.target === this) closeReceipt(false);
+});
+document.getElementById("billModal").addEventListener("click", function (e) {
+  if (e.target === this) closeBillModal();
+});
+document.getElementById("reviewModal").addEventListener("click", function (e) {
+  if (e.target === this) closeReviewModal();
 });
 
 document.getElementById("historySortSelect").addEventListener("change", e => {
@@ -2254,18 +2737,29 @@ document.getElementById("cancelAddItemBtn").addEventListener("click", () => {
 document.getElementById("saveNewItemBtn").addEventListener("click", saveNewItem);
 
 // expose globals needed by inline onclick handlers
-window.addToCart       = addToCart;
-window.updateQty       = updateQty;
-window.removeFromCart  = removeFromCart;
-window.showReceipt     = showReceipt;
-window.closeReceipt    = closeReceipt;
-window.loadHistory     = loadHistory;
+window.addToCart          = addToCart;
+window.updateQty          = updateQty;
+window.removeFromCart     = removeFromCart;
+window.showReceipt        = showReceipt;
+window.closeReceipt       = closeReceipt;
+window.loadHistory        = loadHistory;
+window.closeBillModal     = closeBillModal;
+window.selectBillPaymentMethod = selectBillPaymentMethod;
+window.confirmPay         = confirmPay;
+window.applyOwnerDirectDiscount = applyOwnerDirectDiscount;
+window.requestDiscount    = requestDiscount;
+window.setStar            = setStar;
+window.closeReviewModal   = closeReviewModal;
+window.submitReview       = submitReview;
+window.resolveRequest     = resolveRequest;
+window.saveTableServer    = saveTableServer;
 
 /* ══════════════════════════════════════════════════
    INIT
 ══════════════════════════════════════════════════ */
 (async function init() {
   populateTableSelect();
+  await loadTables();
   renderCart();
   await loadMenu();
 

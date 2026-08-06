@@ -41,6 +41,33 @@ A full-stack POS (Point-of-Sale) system built for small to mid-sized cafes. Hand
 - Delete a past order record
 - Shows who placed each order (customer / owner) and how it was paid
 
+### Table Tabs
+- Each table keeps a running, unpaid "tab" — the customer can order in multiple
+  rounds (coffee now, dessert later) and everything accumulates onto one bill
+- Switching tables shows that table's own in-progress order only; nothing
+  bleeds between tables
+- While ordering, the customer never sees a running total — prices only
+  appear at **View Bill & Pay**, which pulls the real accumulated tab
+
+### Payment (Cash / Online via Razorpay)
+- Customers choose **Cash** or **Online** at Pay Bill; Owner also has **Card**
+  and **UPI** for recording counter payments
+- Online payment opens Razorpay Checkout (test mode) for the exact bill total
+- See [Razorpay setup](#razorpay-payments) below for the current limitation
+
+### Discount Requests
+- Customer can request a discount on their current tab from the Pay Bill screen
+- Owner sees it on the **Requests** tab with the table number and live order
+  amount, and approves with a specific percentage (or declines)
+- Once approved, the percentage is applied automatically to that table's bill
+
+### Servers &amp; Reviews
+- Each table (1–10) has an assigned server, managed from Owner → Menu →
+  Tables &amp; Servers
+- The customer sees "Your server: [name]" once they pick a table
+- After paying, the customer can rate the server and the cafe (1–5 stars) and
+  leave a comment; Owner sees all reviews plus averages under Reports
+
 ---
 
 ## Performance
@@ -134,6 +161,21 @@ Open `frontend/index.html` directly in your browser — no build step needed. Yo
 
 ---
 
+## Razorpay Payments
+
+The "Online" payment option uses [Razorpay Checkout](https://razorpay.com/docs/payments/payment-gateway/web-integration/standard/) in **test mode**, using the key ID baked into `frontend/index.html` (`RAZORPAY_KEY_ID`). That's intentional and safe to leave in client-side code — like Stripe's publishable key, Razorpay's `key_id` is meant to be public; it's the **key secret** that must never be exposed, and this project doesn't have one configured.
+
+**Current limitation:** because there's no key secret, the checkout amount is sent directly from the browser and the payment isn't cryptographically verified server-side — the app trusts whatever `payment_id` Razorpay's widget returns. Fine for a test-mode demo; not what you'd want once real money is involved.
+
+**To harden it for production**, once you have a Razorpay key secret:
+1. Add `RAZORPAY_KEY_SECRET` as an environment variable (locally in `.env`, and in Vercel) — never paste it in chat or commit it to git.
+2. Add a step that creates a Razorpay Order server-side before Checkout opens (`POST https://api.razorpay.com/v1/orders`, authenticated with `key_id:key_secret`).
+3. On payment, verify the returned signature server-side with HMAC-SHA256 before marking the order paid.
+
+Ask for this as a follow-up any time — it's a contained addition on top of the current `/api/tables/<no>/pay` endpoint.
+
+---
+
 ## API Reference
 
 ### Auth
@@ -153,12 +195,36 @@ Open `frontend/index.html` directly in your browser — no build step needed. Yo
 ### Orders
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/orders` | Create an order. Include `payment_method` (`cash`/`card`/`upi`) to place **and pay** in one step |
+| POST | `/api/orders` | Legacy one-shot create (unused by the current UI, kept for compatibility) |
 | GET | `/api/orders` 🔒 | List orders (filter by `?status=`) |
 | GET | `/api/orders/:id` | Order detail with line items |
 | DELETE | `/api/orders/:id` 🔒 | Delete an order record |
 | PATCH | `/api/orders/:id/status` 🔒 | Manually override status |
 | GET | `/api/orders/:id/receipt` | Formatted receipt object, includes payment method |
+
+### Tables &amp; Tabs
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/tables` | All 10 tables with their assigned server |
+| PUT | `/api/tables/:no/server` 🔒 | Assign/rename a table's server |
+| GET | `/api/tables/status` 🔒 | Which tables have an open tab right now, and for how much |
+| GET | `/api/tables/:no/tab` | The table's current running order (or `null`) |
+| POST | `/api/tables/:no/items` | Append items to the table's tab — no payment, this is "Place Order" |
+| POST | `/api/tables/:no/pay` | Settle the tab: `{payment_method, payment_ref?}`, applies any approved discount |
+
+### Discount Requests
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/tables/:no/discount-request` | Customer asks for a discount on their current tab |
+| GET | `/api/tables/:no/discount-status` | Poll the latest request's status for that table |
+| GET | `/api/discount-requests?status=pending` 🔒 | Owner's queue |
+| POST | `/api/discount-requests/:id/resolve` 🔒 | `{action: "approve"\|"deny", discount_percent?}` |
+
+### Reviews
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/reviews` | Submit a rating (`server_rating`/`cafe_rating` 1–5, `comment`) |
+| GET | `/api/reviews` 🔒 | All reviews + average ratings |
 
 ### Reports
 | Method | Endpoint | Description |
@@ -173,14 +239,17 @@ Open `frontend/index.html` directly in your browser — no build step needed. Yo
 ## Database Schema
 
 ```sql
-categories   (id, name, icon)
-menu_items   (id, category_id, name, description, price, available, image_key, created_at)
-orders       (id, table_no, customer, status, subtotal, tax, discount, total,
-              payment_method, placed_by, notes, created_at, billed_at, paid_at)
-order_items  (id, order_id, item_id, quantity, unit_price, line_total)
+categories        (id, name, icon)
+menu_items        (id, category_id, name, description, price, available, image_key, created_at)
+orders             (id, table_no, customer, status, subtotal, tax, discount, discount_percent, total,
+                    payment_method, payment_ref, placed_by, notes, created_at, billed_at, paid_at)
+order_items        (id, order_id, item_id, quantity, unit_price, line_total)
+table_servers      (table_no, server_name)
+discount_requests  (id, table_no, order_id, requested_amount, status, discount_percent, created_at, resolved_at)
+reviews            (id, order_id, table_no, server_name, server_rating, cafe_rating, comment, created_at)
 ```
 
-Foreign key constraints are enforced by Postgres (`ON DELETE CASCADE` for order line items, `ON DELETE RESTRICT` for categories/menu items so historical orders can't be orphaned). `image_key`, `payment_method`, and `placed_by` are added automatically via `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` on startup, so upgrading an existing database is a non-event.
+Foreign key constraints are enforced by Postgres (`ON DELETE CASCADE` for order line items/discount requests, `ON DELETE RESTRICT` for categories/menu items so historical orders can't be orphaned). Every new column/table across both feature rounds is added automatically via `CREATE TABLE IF NOT EXISTS` / `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` on startup, so upgrading an existing database is a non-event — nothing is dropped or re-seeded.
 
 ---
 

@@ -47,8 +47,10 @@ CREATE TABLE IF NOT EXISTS orders (
     subtotal       NUMERIC(10,2) NOT NULL DEFAULT 0.00,
     tax            NUMERIC(10,2) NOT NULL DEFAULT 0.00,
     discount       NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+    discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0,
     total          NUMERIC(10,2) NOT NULL DEFAULT 0.00,
     payment_method VARCHAR(20),
+    payment_ref    VARCHAR(120),
     placed_by      VARCHAR(10)   NOT NULL DEFAULT 'customer',
     notes          TEXT,
     created_at     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -72,3 +74,42 @@ CREATE TABLE IF NOT EXISTS order_items (
 );
 
 CREATE INDEX IF NOT EXISTS idx_oi_order ON order_items(order_id);
+
+-- ------------------------------------------------------------
+--  5. Table Server Assignments
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS table_servers (
+    table_no    VARCHAR(10) PRIMARY KEY,
+    server_name VARCHAR(100) NOT NULL DEFAULT 'Unassigned'
+);
+
+-- ------------------------------------------------------------
+--  6. Discount Requests (customer asks, owner approves a %)
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS discount_requests (
+    id               SERIAL PRIMARY KEY,
+    table_no         VARCHAR(10) NOT NULL,
+    order_id         INTEGER REFERENCES orders(id) ON DELETE CASCADE,
+    requested_amount NUMERIC(10,2) NOT NULL,
+    status           VARCHAR(20) NOT NULL DEFAULT 'pending'
+                     CHECK (status IN ('pending','approved','denied','used')),
+    discount_percent NUMERIC(5,2),
+    created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    resolved_at      TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_discount_req_order ON discount_requests(order_id, status);
+
+-- ------------------------------------------------------------
+--  7. Reviews (server + cafe rating, left after paying)
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS reviews (
+    id            SERIAL PRIMARY KEY,
+    order_id      INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+    table_no      VARCHAR(10),
+    server_name   VARCHAR(100),
+    server_rating SMALLINT CHECK (server_rating BETWEEN 1 AND 5),
+    cafe_rating   SMALLINT CHECK (cafe_rating BETWEEN 1 AND 5),
+    comment       TEXT,
+    created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

@@ -36,7 +36,8 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}}, allow_headers=["Content-Type", "Authorization"])
 TAX_RATE = 0.05
-VALID_PAYMENT_METHODS = {"cash", "card", "upi"}
+VALID_PAYMENT_METHODS = {"cash", "card", "upi", "online"}
+TABLE_NUMBERS = [f"T{i}" for i in range(1, 11)]
 
 # ══════════════════════════════════════════════════════════════════════════
 # CONNECTION HANDLING — pooled, with stale-connection retry
@@ -266,8 +267,10 @@ def init_db():
             subtotal       NUMERIC(10,2) NOT NULL DEFAULT 0.00,
             tax            NUMERIC(10,2) NOT NULL DEFAULT 0.00,
             discount       NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+            discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0,
             total          NUMERIC(10,2) NOT NULL DEFAULT 0.00,
             payment_method VARCHAR(20),
+            payment_ref    VARCHAR(120),
             placed_by      VARCHAR(10) NOT NULL DEFAULT 'customer',
             notes          TEXT,
             created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -276,6 +279,7 @@ def init_db():
         );
         CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
         CREATE INDEX IF NOT EXISTS idx_orders_date ON orders((created_at::date));
+        CREATE INDEX IF NOT EXISTS idx_orders_table_status ON orders(table_no, status);
 
         CREATE TABLE IF NOT EXISTS order_items (
             id         SERIAL PRIMARY KEY,
@@ -286,6 +290,35 @@ def init_db():
             line_total NUMERIC(10,2) NOT NULL
         );
         CREATE INDEX IF NOT EXISTS idx_oi_order ON order_items(order_id);
+
+        CREATE TABLE IF NOT EXISTS table_servers (
+            table_no    VARCHAR(10) PRIMARY KEY,
+            server_name VARCHAR(100) NOT NULL DEFAULT 'Unassigned'
+        );
+
+        CREATE TABLE IF NOT EXISTS discount_requests (
+            id               SERIAL PRIMARY KEY,
+            table_no         VARCHAR(10) NOT NULL,
+            order_id         INTEGER REFERENCES orders(id) ON DELETE CASCADE,
+            requested_amount NUMERIC(10,2) NOT NULL,
+            status           VARCHAR(20) NOT NULL DEFAULT 'pending'
+                             CHECK (status IN ('pending','approved','denied','used')),
+            discount_percent NUMERIC(5,2),
+            created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            resolved_at      TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_discount_req_order ON discount_requests(order_id, status);
+
+        CREATE TABLE IF NOT EXISTS reviews (
+            id            SERIAL PRIMARY KEY,
+            order_id      INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+            table_no      VARCHAR(10),
+            server_name   VARCHAR(100),
+            server_rating SMALLINT CHECK (server_rating BETWEEN 1 AND 5),
+            cafe_rating   SMALLINT CHECK (cafe_rating BETWEEN 1 AND 5),
+            comment       TEXT,
+            created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
     """)
     conn.commit()
 
@@ -294,6 +327,38 @@ def init_db():
         ALTER TABLE menu_items ADD COLUMN IF NOT EXISTS image_key VARCHAR(40) NOT NULL DEFAULT 'default';
         ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(20);
         ALTER TABLE orders ADD COLUMN IF NOT EXISTS placed_by VARCHAR(10) NOT NULL DEFAULT 'customer';
+        ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0;
+        ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_ref VARCHAR(120);
+    """)
+    conn.commit()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS table_servers (
+            table_no    VARCHAR(10) PRIMARY KEY,
+            server_name VARCHAR(100) NOT NULL DEFAULT 'Unassigned'
+        );
+        CREATE TABLE IF NOT EXISTS discount_requests (
+            id               SERIAL PRIMARY KEY,
+            table_no         VARCHAR(10) NOT NULL,
+            order_id         INTEGER REFERENCES orders(id) ON DELETE CASCADE,
+            requested_amount NUMERIC(10,2) NOT NULL,
+            status           VARCHAR(20) NOT NULL DEFAULT 'pending'
+                             CHECK (status IN ('pending','approved','denied','used')),
+            discount_percent NUMERIC(5,2),
+            created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            resolved_at      TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_discount_req_order ON discount_requests(order_id, status);
+        CREATE TABLE IF NOT EXISTS reviews (
+            id            SERIAL PRIMARY KEY,
+            order_id      INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+            table_no      VARCHAR(10),
+            server_name   VARCHAR(100),
+            server_rating SMALLINT CHECK (server_rating BETWEEN 1 AND 5),
+            cafe_rating   SMALLINT CHECK (cafe_rating BETWEEN 1 AND 5),
+            comment       TEXT,
+            created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_orders_table_status ON orders(table_no, status);
     """)
     conn.commit()
 
@@ -408,6 +473,21 @@ def _seed(cur):
                 "UPDATE orders SET subtotal=%s, tax=%s, total=%s WHERE id=%s",
                 (round(subtotal, 2), tax, total, order_id),
             )
+
+    server_names = ["Rahul", "Priya", "Aman", "Sneha", "Vikram", "Ananya", "Karan", "Divya", "Rohan", "Meera"]
+    for t, name in zip(TABLE_NUMBERS, server_names):
+        cur.execute("INSERT INTO table_servers(table_no, server_name) VALUES(%s,%s)", (t, name))
+
+    sample_reviews = [
+        ("T2", "Priya", 5, 5, "Priya was super attentive, and the cold brew was excellent!"),
+        ("T5", "Vikram", 4, 4, "Good coffee, service was a little slow during rush hour."),
+        ("T1", "Rahul", 5, 4, "Loved the ambience, will be back."),
+    ]
+    for table_no, server_name, sr, cr, comment in sample_reviews:
+        cur.execute(
+            "INSERT INTO reviews(table_no, server_name, server_rating, cafe_rating, comment) VALUES(%s,%s,%s,%s,%s)",
+            (table_no, server_name, sr, cr, comment),
+        )
 
 
 try:
@@ -586,6 +666,47 @@ def _fetch_order_on_cursor(cur, order_id):
     return dict(row) if row else None
 
 
+# ── table "tabs": one running open order per table, built up across
+#    multiple Place Order rounds, settled once at Pay Bill ─────────────────
+def _get_open_order(table_no):
+    rows = query(
+        "SELECT * FROM orders WHERE table_no=%s AND status='open' ORDER BY created_at DESC LIMIT 1",
+        (table_no,), fetch=True,
+    )
+    return rows[0] if rows else None
+
+def _get_open_order_on_cursor(cur, table_no):
+    cur.execute(
+        "SELECT * FROM orders WHERE table_no=%s AND status='open' ORDER BY created_at DESC LIMIT 1",
+        (table_no,),
+    )
+    row = cur.fetchone()
+    return dict(row) if row else None
+
+def _recalc_order_totals_on_cursor(cur, order_id):
+    """Recompute subtotal/tax/discount/total from order_items, applying the
+    most recent APPROVED (not yet used) discount request for this order, if
+    any. Single source of truth used both when items are added and when the
+    tab is paid, so an owner glancing at an in-progress tab sees an accurate
+    number even before checkout."""
+    cur.execute("SELECT COALESCE(SUM(line_total),0) AS subtotal FROM order_items WHERE order_id=%s", (order_id,))
+    subtotal = float(cur.fetchone()["subtotal"])
+    cur.execute(
+        "SELECT discount_percent FROM discount_requests WHERE order_id=%s AND status='approved' "
+        "ORDER BY resolved_at DESC LIMIT 1", (order_id,),
+    )
+    approved = cur.fetchone()
+    discount_percent = float(approved["discount_percent"]) if approved else 0
+    tax = round(subtotal * TAX_RATE, 2)
+    discount_amount = round(subtotal * discount_percent / 100, 2) if discount_percent else 0
+    total = round(subtotal + tax - discount_amount, 2)
+    cur.execute(
+        "UPDATE orders SET subtotal=%s, tax=%s, discount=%s, discount_percent=%s, total=%s WHERE id=%s",
+        (round(subtotal, 2), tax, discount_amount, discount_percent, total, order_id),
+    )
+    return round(subtotal, 2), tax, discount_amount, total
+
+
 @app.post("/api/orders")
 def create_order():
     data = request.json or {}
@@ -683,6 +804,7 @@ def get_receipt(order_id):
         "customer": order["customer"], "items": order["items"],
         "subtotal": order["subtotal"], "tax": order["tax"],
         "tax_rate": f"{TAX_RATE*100:.0f}%", "discount": order["discount"],
+        "discount_percent": order.get("discount_percent") or 0,
         "total": order["total"], "status": order["status"],
         "payment_method": order.get("payment_method"),
         "created_at": str(order["created_at"]),
@@ -690,6 +812,266 @@ def get_receipt(order_id):
         "cafe_name": "Brew & Co.", "address": "12 Bean Street, Coffee Quarter",
         "thank_you": "Thank you for visiting Brew & Co.! See you soon",
     }})
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# TABLES — server assignment + per-table running tab
+# ══════════════════════════════════════════════════════════════════════════
+@app.get("/api/tables")
+def list_tables():
+    rows = query("SELECT table_no, server_name FROM table_servers", fetch=True)
+    by_no = {r["table_no"]: r["server_name"] for r in rows}
+    return jsonify([{"table_no": t, "server_name": by_no.get(t, "Unassigned")} for t in TABLE_NUMBERS])
+
+
+@app.put("/api/tables/<table_no>/server")
+@owner_required
+def set_table_server(table_no):
+    if table_no not in TABLE_NUMBERS:
+        return jsonify({"error": "invalid table"}), 400
+    server_name = ((request.json or {}).get("server_name") or "").strip() or "Unassigned"
+    query(
+        "INSERT INTO table_servers(table_no, server_name) VALUES(%s,%s) "
+        "ON CONFLICT (table_no) DO UPDATE SET server_name = EXCLUDED.server_name "
+        "RETURNING table_no",
+        (table_no, server_name),
+    )
+    return jsonify({"table_no": table_no, "server_name": server_name})
+
+
+@app.get("/api/tables/status")
+@owner_required
+def tables_status():
+    servers = query("SELECT table_no, server_name FROM table_servers", fetch=True)
+    server_map = {r["table_no"]: r["server_name"] for r in servers}
+    open_orders = query(
+        "SELECT id, table_no, subtotal, total, created_at FROM orders WHERE status='open'", fetch=True
+    )
+    open_map = {r["table_no"]: r for r in open_orders}
+    result = []
+    for t in TABLE_NUMBERS:
+        o = open_map.get(t)
+        result.append({
+            "table_no": t,
+            "server_name": server_map.get(t, "Unassigned"),
+            "has_open_tab": o is not None,
+            "order_id": o["id"] if o else None,
+            "subtotal": o["subtotal"] if o else 0,
+            "total": o["total"] if o else 0,
+            "since": o["created_at"] if o else None,
+        })
+    return jsonify(result)
+
+
+@app.get("/api/tables/<table_no>/tab")
+def get_table_tab(table_no):
+    if table_no not in TABLE_NUMBERS:
+        return jsonify({"error": "invalid table"}), 400
+    order = _get_open_order(table_no)
+    if not order:
+        return jsonify({"table_no": table_no, "order": None})
+    return jsonify({"table_no": table_no, "order": _fetch_order(order["id"])})
+
+
+@app.post("/api/tables/<table_no>/items")
+def add_items_to_tab(table_no):
+    """The customer-facing 'Place Order' action: appends items to this
+    table's running tab (creating one if it doesn't have one yet) instead
+    of creating a one-shot order. No payment happens here — the customer
+    doesn't see a total at this step, only at Pay Bill."""
+    if table_no not in TABLE_NUMBERS:
+        return jsonify({"error": "invalid table"}), 400
+    items = (request.json or {}).get("items", [])
+    if not items:
+        return jsonify({"error": "No items to add"}), 400
+    placed_by = "owner" if _current_owner_payload() else "customer"
+    now = datetime.now()
+
+    def _do(conn):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        existing = _get_open_order_on_cursor(cur, table_no)
+        if existing:
+            order_id = existing["id"]
+        else:
+            cur.execute(
+                "INSERT INTO orders(table_no,status,subtotal,tax,discount,total,created_at,placed_by) "
+                "VALUES(%s,'open',0,0,0,0,%s,%s) RETURNING id",
+                (table_no, now, placed_by),
+            )
+            order_id = cur.fetchone()["id"]
+        rows = [
+            (order_id, it["item_id"], int(it["quantity"]), float(it["unit_price"]),
+             round(int(it["quantity"]) * float(it["unit_price"]), 2))
+            for it in items
+        ]
+        execute_values(
+            cur, "INSERT INTO order_items(order_id,item_id,quantity,unit_price,line_total) VALUES %s", rows
+        )
+        _recalc_order_totals_on_cursor(cur, order_id)
+        return _fetch_order_on_cursor(cur, order_id)
+
+    order = run(_do)
+    return jsonify(order), 201
+
+
+@app.post("/api/tables/<table_no>/pay")
+def pay_tab(table_no):
+    """Settle a table's running tab: applies any approved discount, marks it
+    paid with the given payment method, and frees the table for a new tab."""
+    if table_no not in TABLE_NUMBERS:
+        return jsonify({"error": "invalid table"}), 400
+    data = request.json or {}
+    payment_method = data.get("payment_method")
+    if payment_method not in VALID_PAYMENT_METHODS:
+        return jsonify({"error": f"payment_method must be one of {sorted(VALID_PAYMENT_METHODS)}"}), 400
+    payment_ref = data.get("payment_ref")  # e.g. Razorpay payment id, for 'online'
+
+    order = _get_open_order(table_no)
+    if not order or float(order["subtotal"]) <= 0:
+        return jsonify({"error": "Nothing to pay for this table yet"}), 400
+
+    now = datetime.now()
+
+    def _do(conn):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        _recalc_order_totals_on_cursor(cur, order["id"])
+        cur.execute(
+            "UPDATE orders SET status='paid', payment_method=%s, payment_ref=%s, paid_at=%s WHERE id=%s",
+            (payment_method, payment_ref, now, order["id"]),
+        )
+        cur.execute(
+            "UPDATE discount_requests SET status='used' WHERE order_id=%s AND status='approved'",
+            (order["id"],),
+        )
+        return _fetch_order_on_cursor(cur, order["id"])
+
+    result = run(_do)
+    return jsonify(result)
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# DISCOUNT REQUESTS
+# ══════════════════════════════════════════════════════════════════════════
+@app.post("/api/tables/<table_no>/discount-request")
+def request_discount(table_no):
+    if table_no not in TABLE_NUMBERS:
+        return jsonify({"error": "invalid table"}), 400
+    order = _get_open_order(table_no)
+    if not order or float(order["subtotal"]) <= 0:
+        return jsonify({"error": "Add items to your order before requesting a discount"}), 400
+    existing = query(
+        "SELECT * FROM discount_requests WHERE order_id=%s AND status='pending'", (order["id"],), fetch=True
+    )
+    if existing:
+        return jsonify(existing[0]), 200
+    req_id = query(
+        "INSERT INTO discount_requests(table_no, order_id, requested_amount, status) "
+        "VALUES(%s,%s,%s,'pending') RETURNING id",
+        (table_no, order["id"], order["subtotal"]),
+    )
+    row = query("SELECT * FROM discount_requests WHERE id=%s", (req_id,), fetch=True)
+    return jsonify(row[0]), 201
+
+
+@app.get("/api/tables/<table_no>/discount-status")
+def discount_status(table_no):
+    if table_no not in TABLE_NUMBERS:
+        return jsonify({"error": "invalid table"}), 400
+    order = _get_open_order(table_no)
+    if not order:
+        return jsonify({"status": "none"})
+    rows = query(
+        "SELECT * FROM discount_requests WHERE order_id=%s ORDER BY created_at DESC LIMIT 1",
+        (order["id"],), fetch=True,
+    )
+    return jsonify(rows[0] if rows else {"status": "none"})
+
+
+@app.get("/api/discount-requests")
+@owner_required
+def list_discount_requests():
+    status = request.args.get("status", "pending")
+    rows = query(
+        "SELECT dr.*, o.subtotal AS current_subtotal, o.total AS current_total "
+        "FROM discount_requests dr LEFT JOIN orders o ON o.id = dr.order_id "
+        "WHERE dr.status=%s ORDER BY dr.created_at ASC",
+        (status,), fetch=True,
+    )
+    return jsonify(rows)
+
+
+@app.post("/api/discount-requests/<int:req_id>/resolve")
+@owner_required
+def resolve_discount_request(req_id):
+    data = request.json or {}
+    action = data.get("action")
+    if action not in ("approve", "deny"):
+        return jsonify({"error": "action must be 'approve' or 'deny'"}), 400
+    rows = query("SELECT * FROM discount_requests WHERE id=%s", (req_id,), fetch=True)
+    if not rows:
+        return jsonify({"error": "Not found"}), 404
+    if rows[0]["status"] != "pending":
+        return jsonify({"error": "This request was already resolved"}), 409
+    now = datetime.now()
+    if action == "approve":
+        pct = float(data.get("discount_percent", 0))
+        if pct <= 0 or pct > 100:
+            return jsonify({"error": "discount_percent must be between 0 and 100"}), 400
+        query(
+            "UPDATE discount_requests SET status='approved', discount_percent=%s, resolved_at=%s WHERE id=%s RETURNING id",
+            (pct, now, req_id),
+        )
+    else:
+        query("UPDATE discount_requests SET status='denied', resolved_at=%s WHERE id=%s RETURNING id", (now, req_id))
+    # keep the order's stored total in sync immediately, so the owner's own
+    # view of that table's tab reflects the decision right away
+    if rows[0]["order_id"]:
+        def _resync(conn):
+            cur2 = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            _recalc_order_totals_on_cursor(cur2, rows[0]["order_id"])
+        run(_resync)
+    row = query("SELECT * FROM discount_requests WHERE id=%s", (req_id,), fetch=True)
+    return jsonify(row[0])
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# REVIEWS
+# ══════════════════════════════════════════════════════════════════════════
+@app.post("/api/reviews")
+def submit_review():
+    data = request.json or {}
+    table_no = data.get("table_no")
+    order_id = data.get("order_id")
+    server_rating = data.get("server_rating")
+    cafe_rating = data.get("cafe_rating")
+    comment = (data.get("comment") or "").strip()
+    if server_rating is None and cafe_rating is None:
+        return jsonify({"error": "Provide at least one rating"}), 400
+    for r in (server_rating, cafe_rating):
+        if r is not None and not (1 <= int(r) <= 5):
+            return jsonify({"error": "Ratings must be between 1 and 5"}), 400
+    server_name = None
+    if table_no:
+        rows = query("SELECT server_name FROM table_servers WHERE table_no=%s", (table_no,), fetch=True)
+        server_name = rows[0]["server_name"] if rows else None
+    review_id = query(
+        "INSERT INTO reviews(order_id, table_no, server_name, server_rating, cafe_rating, comment) "
+        "VALUES(%s,%s,%s,%s,%s,%s) RETURNING id",
+        (order_id, table_no, server_name, server_rating, cafe_rating, comment),
+    )
+    return jsonify({"id": review_id}), 201
+
+
+@app.get("/api/reviews")
+@owner_required
+def list_reviews():
+    rows = query("SELECT * FROM reviews ORDER BY created_at DESC LIMIT 100", fetch=True)
+    summary = query(
+        "SELECT COALESCE(AVG(server_rating),0) AS avg_server, "
+        "COALESCE(AVG(cafe_rating),0) AS avg_cafe, COUNT(*) AS total FROM reviews",
+        fetch=True,
+    )
+    return jsonify({"reviews": rows, "summary": summary[0]})
 
 
 # ══════════════════════════════════════════════════════════════════════════
