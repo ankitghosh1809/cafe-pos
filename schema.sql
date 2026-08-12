@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS menu_items (
     price       NUMERIC(10,2)  NOT NULL CHECK (price >= 0),
     available   SMALLINT       NOT NULL DEFAULT 1,
     image_key   VARCHAR(40)    NOT NULL DEFAULT 'default',
+    modifiers   JSONB,         -- optional list of {name, type, required, options:[{label, delta}]}
     created_at  TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -44,6 +45,8 @@ CREATE TABLE IF NOT EXISTS orders (
     customer       VARCHAR(150),
     status         VARCHAR(20)   NOT NULL DEFAULT 'open'
                    CHECK (status IN ('open', 'billed', 'paid', 'cancelled')),
+    kitchen_status VARCHAR(20)   NOT NULL DEFAULT 'new'
+                   CHECK (kitchen_status IN ('new','preparing','ready','served')),
     subtotal       NUMERIC(10,2) NOT NULL DEFAULT 0.00,
     tax            NUMERIC(10,2) NOT NULL DEFAULT 0.00,
     discount       NUMERIC(10,2) NOT NULL DEFAULT 0.00,
@@ -51,6 +54,8 @@ CREATE TABLE IF NOT EXISTS orders (
     total          NUMERIC(10,2) NOT NULL DEFAULT 0.00,
     payment_method VARCHAR(20),
     payment_ref    VARCHAR(120),
+    razorpay_order_id VARCHAR(64),  -- set when online checkout starts; verified against on payment
+    receipt_token  VARCHAR(64),     -- required to view this order's receipt unless authenticated as owner
     placed_by      VARCHAR(10)   NOT NULL DEFAULT 'customer',
     notes          TEXT,
     created_at     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -60,6 +65,9 @@ CREATE TABLE IF NOT EXISTS orders (
 
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_date   ON orders((created_at::date));
+-- Guarantees at most one open tab per table, even under concurrent
+-- requests — see README changelog.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_one_open_per_table ON orders(table_no) WHERE status = 'open';
 
 -- ------------------------------------------------------------
 --  4. Order Line Items
@@ -70,7 +78,8 @@ CREATE TABLE IF NOT EXISTS order_items (
     item_id    INTEGER       NOT NULL REFERENCES menu_items(id) ON DELETE RESTRICT,
     quantity   INTEGER       NOT NULL DEFAULT 1 CHECK (quantity > 0),
     unit_price NUMERIC(10,2) NOT NULL,
-    line_total NUMERIC(10,2) NOT NULL
+    line_total NUMERIC(10,2) NOT NULL,
+    modifiers  JSONB          -- resolved selections for this line: [{group, option, delta}]
 );
 
 CREATE INDEX IF NOT EXISTS idx_oi_order ON order_items(order_id);

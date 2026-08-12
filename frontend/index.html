@@ -1114,6 +1114,140 @@
     .review-comment { font-size: .84rem; color: var(--text); }
     .section-divider { border: none; border-top: 1px solid var(--border); margin: 26px 0; }
     .subsection-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--roast); margin-bottom: 12px; }
+
+    /* tables & servers: copy-link button */
+    .tsc-copy-link { width: 100%; margin-top: 8px; font-size: .72rem; padding: 6px 8px; justify-content: center; }
+
+    /* table-locked badge (QR deep link) */
+    .table-locked-badge { background: rgba(232,164,74,.15); color: var(--amber); border: 1px solid rgba(232,164,74,.4); border-radius: 20px; padding: 4px 12px; font-size: .74rem; font-weight: 600; white-space: nowrap; }
+
+    /* nav tab badges (requests / kitchen) */
+    .tab-badge { background: var(--blush); color: white; border-radius: 20px; font-size: .65rem; font-weight: 700; padding: 1px 6px; margin-left: 5px; }
+
+    /* server badge (owner taking orders for a table) */
+    .server-badge { font-size: .74rem; color: var(--cream); opacity: .85; white-space: nowrap; }
+
+    /* table strip: kitchen status chip */
+    .tc-kstatus { display: block; font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; margin-top: 2px; }
+    .tc-kstatus-preparing { color: var(--amber); }
+    .tc-kstatus-ready { color: var(--sage); }
+
+    /* cart / receipt: modifier sub-line under an item name */
+    .oi-mods, .ri-mods { font-size: .72rem; color: var(--muted); font-weight: 400; margin-top: 1px; }
+    .order-panel-handle { display: none; }
+
+    /* menu card: "customize" hint when item has modifiers */
+    .menu-card-custom { display: block; font-size: .64rem; color: var(--latte); font-weight: 600; text-transform: uppercase; letter-spacing: .03em; margin-top: 2px; }
+
+    /* customize (modifiers) modal */
+    .mod-group { margin-bottom: 16px; }
+    .mod-group-title { font-size: .82rem; font-weight: 700; color: var(--roast); margin-bottom: 8px; }
+    .mod-required { font-size: .66rem; font-weight: 500; color: var(--blush); text-transform: uppercase; letter-spacing: .02em; }
+    .mod-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+    .mod-opt { display: flex; align-items: center; gap: 6px; background: white; border: 1.5px solid var(--border); border-radius: 20px; padding: 7px 14px; font-family: inherit; font-size: .82rem; cursor: pointer; transition: all .15s; }
+    .mod-opt:hover { border-color: var(--latte); }
+    .mod-opt.chosen { background: var(--roast); border-color: var(--roast); color: white; }
+    .mod-opt-delta { font-size: .72rem; opacity: .75; }
+
+    /* modifiers editor (owner: add item form) */
+    .mod-edit-group { background: var(--foam); border: 1px solid var(--border); border-radius: var(--r); padding: 12px; margin-bottom: 10px; }
+    .mod-edit-group-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .mod-edit-group-row input[type=text], .mod-edit-group-row input:not([type]) { flex: 1; min-width: 120px; }
+    .mod-edit-group-row select { border: 1.5px solid var(--border); border-radius: 6px; padding: 6px 8px; font-family: inherit; font-size: .8rem; }
+    .mod-edit-required { display: flex; align-items: center; gap: 4px; font-size: .76rem; color: var(--muted); white-space: nowrap; }
+    .mod-edit-options { display: flex; flex-direction: column; gap: 6px; padding-left: 4px; }
+    .mod-edit-opt-row { display: flex; gap: 6px; align-items: center; }
+    .mod-edit-opt-row input { flex: 1; }
+    .mod-edit-opt-row input[type=number] { max-width: 90px; flex: none; }
+    .mod-edit-group input, .mod-edit-opt-row input { border: 1.5px solid var(--border); border-radius: 6px; padding: 6px 8px; font-family: inherit; font-size: .8rem; }
+
+    /* kitchen display */
+    .kitchen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 14px; }
+    .kitchen-card { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px; box-shadow: var(--shadow-s); border-top: 4px solid var(--muted); }
+    .kitchen-card.kstatus-new { border-top-color: var(--blush); }
+    .kitchen-card.kstatus-preparing { border-top-color: var(--amber); }
+    .kitchen-card.kstatus-ready { border-top-color: var(--sage); }
+    .kitchen-card-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .kitchen-table { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--roast); }
+    .kitchen-age { font-size: .72rem; color: var(--muted); }
+    .kitchen-status-pill { display: inline-block; font-size: .64rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; background: var(--cream); color: var(--muted); }
+    .kitchen-status-pill.kstatus-new { background: rgba(212,112,106,.14); color: var(--blush); }
+    .kitchen-status-pill.kstatus-preparing { background: rgba(232,164,74,.16); color: #a3690f; }
+    .kitchen-status-pill.kstatus-ready { background: rgba(122,158,126,.16); color: #3f6b43; }
+    .kitchen-items { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .kitchen-item-row { display: flex; gap: 8px; font-size: .84rem; }
+    .kitchen-item-qty { font-weight: 700; color: var(--roast); min-width: 26px; }
+    .kitchen-advance-btn { width: 100%; justify-content: center; }
+
+    /* ══════════════════════════════════════════════════
+       RESPONSIVE / MOBILE
+       The customer portal is meant to be opened on a
+       customer's own phone (QR / shared link), so it gets
+       the most attention below; the owner/kitchen portals
+       are tablet/desktop-oriented but shouldn't break on a
+       mid-size tablet either.
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .app { grid-template-columns: 190px 1fr 320px; }
+    }
+
+    @media (max-width: 860px) {
+      html, body { overflow: auto; }
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px auto 1fr;
+        height: auto;
+        min-height: 100vh;
+      }
+      .sidebar {
+        grid-column: 1; grid-row: 2;
+        display: flex; flex-direction: row; overflow-x: auto; overflow-y: hidden;
+        padding: 10px 12px; gap: 8px; white-space: nowrap; border-right: none; border-bottom: 1px solid var(--border);
+      }
+      .sidebar-label { display: none; }
+      .cat-btn { flex: none; }
+      .menu-area { grid-column: 1; grid-row: 3; padding: 14px; overflow: visible; }
+      .menu-grid { grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); }
+
+      /* order panel becomes a bottom sheet you pull open, instead of a
+         fixed third column — the single biggest change needed to make
+         ordering usable on a phone. */
+      .order-panel {
+        grid-column: 1; grid-row: 4;
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+        max-height: 70vh; border-left: none; border-top: 2px solid var(--border);
+        border-radius: 18px 18px 0 0; box-shadow: var(--shadow-l);
+        transform: translateY(calc(100% - 64px));
+        transition: transform .25s ease;
+        display: flex; flex-direction: column;
+      }
+      .order-panel.sheet-open { transform: translateY(0); }
+      .order-panel-handle {
+        display: block; text-align: center; padding: 10px 0 6px; cursor: pointer;
+        font-size: .8rem; font-weight: 700; color: var(--roast); flex: none;
+      }
+      .order-panel-handle::before {
+        content: ""; display: block; width: 40px; height: 4px; background: var(--border);
+        border-radius: 4px; margin: 0 auto 8px;
+      }
+      .order-items { overflow-y: auto; }
+
+      .topbar { padding: 0 14px; gap: 12px; flex-wrap: wrap; height: auto; min-height: 60px; padding-top: 8px; padding-bottom: 8px; }
+      .topbar-tabs { margin-left: 0; order: 3; width: 100%; overflow-x: auto; }
+      .topbar-info { flex-wrap: wrap; gap: 8px; }
+      .logo { font-size: 1.1rem; }
+
+      .kitchen-grid, .tables-grid { grid-template-columns: 1fr; }
+      .mgmt-table-wrap { overflow-x: auto; }
+    }
+
+    @media (max-width: 520px) {
+      .portal-cards { grid-template-columns: 1fr; max-width: 340px; }
+      .portal-logo { font-size: 2.2rem; }
+      .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .receipt, #billModalCard, #customizeModalCard { max-width: 94vw !important; }
+      .mod-edit-group-row { flex-direction: column; align-items: stretch; }
+    }
   </style>
 </head>
 <body>
@@ -1321,6 +1455,12 @@
       <div class="portal-card-desc">Browse the menu and place your order. No password needed.</div>
       <div class="portal-card-cta">START ORDERING →</div>
     </div>
+    <div class="portal-card" id="pickKitchen">
+      <div class="portal-card-icon">🍳</div>
+      <div class="portal-card-title">Kitchen</div>
+      <div class="portal-card-desc">View live tickets and update order status.</div>
+      <div class="portal-card-cta">KITCHEN LOGIN →</div>
+    </div>
     <div class="portal-card" id="pickOwner">
       <div class="portal-card-icon">🔐</div>
       <div class="portal-card-title">Owner</div>
@@ -1331,12 +1471,12 @@
 </div>
 
 <!-- ════════════════════════════════════════════
-     OWNER LOGIN
+     LOGIN (shared by owner and kitchen/staff)
 ════════════════════════════════════════════ -->
 <div class="portal-screen" id="ownerLoginScreen" style="display:none">
   <div class="login-card">
-    <div class="login-card-title">Owner Login</div>
-    <div class="login-card-sub">Enter the owner password to continue.</div>
+    <div class="login-card-title" id="loginCardTitle">Owner Login</div>
+    <div class="login-card-sub" id="loginCardSub">Enter the owner password to continue.</div>
     <div class="login-error" id="loginError"></div>
     <input class="login-input" id="ownerPasswordInput" type="password" placeholder="Password" autocomplete="current-password" />
     <button class="btn btn-primary" id="ownerLoginBtn" style="width:100%;justify-content:center;">Log In</button>
@@ -1354,7 +1494,8 @@
     <div class="logo">Brew <span>&amp;</span> Co.</div>
 
     <div class="topbar-tabs" id="topbarTabs">
-      <button class="tab-btn active" data-view="pos">☕  Order</button>
+      <button class="tab-btn active" data-view="pos" id="posViewBtn">☕  Order</button>
+      <button class="tab-btn" data-view="kitchen" id="kitchenTabBtn" style="display:none;">🍳  Kitchen<span class="tab-badge" id="kitchenBadge" style="display:none;">0</span></button>
       <button class="tab-btn" data-view="menu" id="menuTabBtn" style="display:none;">🧾  Menu</button>
       <button class="tab-btn" data-view="reports" id="reportsTabBtn" style="display:none;">📊  Reports</button>
       <button class="tab-btn" data-view="history" id="historyTabBtn" style="display:none;">🗃  History</button>
@@ -1364,8 +1505,9 @@
     <div class="topbar-info">
       <span class="server-badge" id="serverBadge" style="display:none;">🧑‍🍳 <b id="serverBadgeName">—</b></span>
       <span class="owner-chip" id="ownerChip" style="display:none;">Owner</span>
-      <span style="color:var(--muted);font-size:.75rem;">Table</span>
+      <span style="color:var(--muted);font-size:.75rem;" id="tableInputLabel">Table</span>
       <select class="table-input" id="tableInput"></select>
+      <span class="table-locked-badge" id="tableLockedBadge" style="display:none;"></span>
       <span class="portal-exit" id="logoutBtn" style="display:none;">Log out</span>
       <span class="portal-exit" id="exitPortalBtn">Switch portal</span>
     </div>
@@ -1383,6 +1525,7 @@
   </main>
 
   <aside class="order-panel">
+    <div class="order-panel-handle" id="orderPanelHandle">Current Order · <span id="itemCountHandle">0 items</span></div>
     <div class="order-header">
       <span class="order-title">Current Order</span>
       <span class="order-badge" id="itemCount">0 items</span>
@@ -1443,6 +1586,7 @@
           <div class="cal-grid" id="calGrid"></div>
         </div>
       </div>
+      <button class="btn btn-outline btn-sm" id="exportCsvBtn" style="margin-left:auto;">⬇ Export CSV</button>
     </div>
     <div id="historyContent"><div class="loader">Loading…</div></div>
   </section>
@@ -1477,6 +1621,11 @@
         <label>Icon</label>
         <div class="icon-pick-grid" id="newItemIconGrid"></div>
       </div>
+      <div class="form-field" style="margin-bottom:12px;">
+        <label>Modifiers <span style="font-weight:400;color:var(--muted)">(optional — size, add-ons, etc.)</span></label>
+        <div id="newItemModifiersEditor"></div>
+        <button type="button" class="btn btn-outline btn-sm" id="addModifierGroupBtn" style="margin-top:8px;">+ Add option group</button>
+      </div>
       <div class="action-btns">
         <button class="btn btn-outline" id="cancelAddItemBtn">Cancel</button>
         <button class="btn btn-primary" id="saveNewItemBtn">Save Item</button>
@@ -1496,6 +1645,12 @@
     <div id="requestsContent"><div class="loader">Loading…</div></div>
   </section>
 
+  <section class="view-area" id="kitchenView">
+    <div class="view-title">Kitchen</div>
+    <div class="view-sub">Live tickets, oldest first — tap to advance status</div>
+    <div id="kitchenContent"><div class="loader">Loading…</div></div>
+  </section>
+
 </div>
 
 <!-- ── Bill / Pay Modal ───────────────────────── -->
@@ -1506,6 +1661,11 @@
 <!-- ── Review Modal ───────────────────────────── -->
 <div class="modal-backdrop" id="reviewModal">
   <div class="receipt" id="reviewModalCard" style="max-width:380px;"></div>
+</div>
+
+<!-- ── Customize (modifiers) Modal ───────────────── -->
+<div class="modal-backdrop" id="customizeModal">
+  <div class="receipt" id="customizeModalCard" style="max-width:400px;"></div>
 </div>
 
 <!-- ── Receipt Modal ─────────────────────────── -->
@@ -1524,14 +1684,17 @@
 ══════════════════════════════════════════════════ */
 const API = (location.protocol === "file:") ? "http://localhost:5000/api" : "/api";
 const CACHE_TTL = 20000;
-const RAZORPAY_KEY_ID = "rzp_test_TLgpiMnkv0Bm4D";
+let RAZORPAY_KEY_ID = null;       // fetched from /api/config — the key_id is public/safe, unlike the secret
+let RAZORPAY_CONFIGURED = false;
 
 /* ══════════════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════════ */
+const TABLE_NUMBERS = Array.from({ length: 10 }, (_, i) => `T${i + 1}`);
 let menuData    = [];
-let carts       = {};       // { "T1": { itemId: {item, qty} }, "T2": {...}, ... } — per-table, unsent round
+let carts       = {};       // { "T1": { cartKey: {item, qty, modifiers}, ... }, ... } — per-table, unsent round
 let currentTable = "T1";
+let tableLocked = false;    // true when opened via a per-table QR link (#customer/T5) — hides the table dropdown
 let serverMap   = {};       // { "T1": "Rahul", ... }
 let activeView  = "pos";
 let activeCat   = null;
@@ -1542,7 +1705,12 @@ let histSort    = "desc";
 let selectedDate = null;
 let calViewYear, calViewMonth;
 let ownerToken  = localStorage.getItem("bcOwnerToken") || null;
-let portalMode  = null;     // "customer" | "owner"
+let staffToken  = localStorage.getItem("bcStaffToken") || null;
+let portalMode  = null;     // "customer" | "owner" | "kitchen"
+let receiptTokens = {};     // { orderId: "receipt_token" } — needed to view a receipt (IDOR fix)
+let pendingModifierItem = null; // menu item currently open in the customize modal
+let kitchenPollTimer = null;
+let ownerLivePollTimer = null;
 const _cache = {};
 
 // Bill/Pay modal state
@@ -1558,9 +1726,33 @@ let lastPaidOrderId = null;  // used to attach the post-payment review to an ord
 const fmt = v => "₹" + Number(v).toFixed(2);
 const fmtDate = s => new Date(s).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
+// Every piece of text that could ever originate from someone other than the
+// authenticated owner (review comments, in principle anything free-typed)
+// MUST go through this before landing in an innerHTML template string.
+// Reviews are the sharpest example: POST /api/reviews is public and
+// unauthenticated, and comments render in the owner's Reviews panel — an
+// unescaped comment there runs as script in the owner's browser, right next
+// to the owner's own auth token in localStorage. Applied broadly (menu text,
+// server names too) as defense in depth even where the value happens to be
+// owner-authored today.
+function esc(str) {
+  const div = document.createElement("div");
+  div.textContent = str == null ? "" : String(str);
+  return div.innerHTML;
+}
+
+// For interpolating into a quoted HTML attribute (value="...", title="...").
+// esc() alone doesn't escape stray quote characters — safe as element text,
+// not safe as attribute content, since a bare " would let the string break
+// out of the attribute early.
+function escAttr(str) {
+  return esc(str).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 async function api(path, opts = {}) {
   const headers = { "Content-Type": "application/json" };
-  if (ownerToken) headers["Authorization"] = `Bearer ${ownerToken}`;
+  const token = ownerToken || staffToken;
+  if (token) headers["Authorization"] = `Bearer ${token}`;
   let r, data = null;
   try {
     r = await fetch(API + path, { headers, ...opts });
@@ -1569,16 +1761,29 @@ async function api(path, opts = {}) {
     toast("error", "Can't reach the server — check your connection");
     return { ok: false, status: 0, data: null };
   }
-  const isAuthEndpoint = path.startsWith("/owner/login");
+  const isAuthEndpoint = path.startsWith("/owner/login") || path.startsWith("/staff/login");
   if (r.status === 401 && !isAuthEndpoint) {
-    ownerToken = null;
-    localStorage.removeItem("bcOwnerToken");
     if (portalMode === "owner") {
+      ownerToken = null;
+      localStorage.removeItem("bcOwnerToken");
+      toast("error", "Session expired — please log in again");
+      showOwnerLogin();
+    } else if (portalMode === "kitchen") {
+      staffToken = null;
+      localStorage.removeItem("bcStaffToken");
       toast("error", "Session expired — please log in again");
       showOwnerLogin();
     }
   }
   return { ok: r.ok, status: r.status, data };
+}
+
+async function loadPublicConfig() {
+  const res = await api("/config");
+  if (res.ok) {
+    RAZORPAY_KEY_ID = res.data.razorpay_key_id;
+    RAZORPAY_CONFIGURED = res.data.razorpay_configured;
+  }
 }
 
 function toast(type, msg) {
@@ -1598,12 +1803,24 @@ function cartFor(tableNo) {
   return carts[tableNo];
 }
 
+// Cart entries are keyed by item + the exact modifier selection, so
+// "Cappuccino / Large" and "Cappuccino / Regular" sit as separate lines.
+function cartKey(itemId, modifiers) {
+  const sig = (modifiers || []).slice().sort((a, b) => a.group.localeCompare(b.group))
+    .map(m => `${m.group}:${m.option}`).join("|");
+  return `${itemId}::${sig}`;
+}
+
 /* ══════════════════════════════════════════════════
    PORTAL / AUTH
 ══════════════════════════════════════════════════ */
+let pendingLoginRole = "owner"; // which portal the login screen is currently authenticating into
+
 function showLanding() {
   portalMode = null;
   stopDiscountPoll();
+  stopKitchenPoll();
+  stopOwnerLivePoll();
   document.getElementById("landingScreen").style.display = "flex";
   document.getElementById("ownerLoginScreen").style.display = "none";
   document.getElementById("appRoot").style.display = "none";
@@ -1613,7 +1830,12 @@ function showLanding() {
   history.replaceState(null, "", location.pathname + location.search);
 }
 
-function showOwnerLogin() {
+function showOwnerLogin(role = "owner") {
+  pendingLoginRole = role;
+  document.getElementById("loginCardTitle").textContent = role === "owner" ? "Owner Login" : "Kitchen Login";
+  document.getElementById("loginCardSub").textContent = role === "owner"
+    ? "Enter the owner password to continue."
+    : "Enter the kitchen/staff password to continue.";
   document.getElementById("landingScreen").style.display = "none";
   document.getElementById("ownerLoginScreen").style.display = "flex";
   document.getElementById("appRoot").style.display = "none";
@@ -1625,27 +1847,40 @@ function showOwnerLogin() {
 
 function applyPortalChrome() {
   const isOwner = portalMode === "owner";
-  document.getElementById("ownerChip").style.display = isOwner ? "" : "none";
-  document.getElementById("logoutBtn").style.display = isOwner ? "" : "none";
+  const isKitchen = portalMode === "kitchen";
+  document.getElementById("ownerChip").style.display = (isOwner || isKitchen) ? "" : "none";
+  document.getElementById("ownerChip").textContent = isOwner ? "OWNER" : (isKitchen ? "KITCHEN" : "");
+  document.getElementById("logoutBtn").style.display = (isOwner || isKitchen) ? "" : "none";
   ["menuTabBtn", "reportsTabBtn", "historyTabBtn", "requestsTabBtn"].forEach(id => {
     document.getElementById(id).style.display = isOwner ? "" : "none";
   });
+  const kitchenTabBtn = document.getElementById("kitchenTabBtn");
+  if (kitchenTabBtn) kitchenTabBtn.style.display = (isOwner || isKitchen) ? "" : "none";
   document.getElementById("ownerDiscountRow").style.display = isOwner ? "" : "none";
   document.getElementById("totalsBox").style.display = isOwner ? "" : "none";
   document.getElementById("tableStrip").style.display = isOwner ? "flex" : "none";
+  document.getElementById("posViewBtn").style.display = isKitchen ? "none" : "";
   if (isOwner) {
     refreshTableStrip();
     refreshRequestsBadge();
+    startOwnerLivePoll();
   }
 }
 
-function enterCustomerPortal() {
+function enterCustomerPortal(lockedTable) {
   portalMode = "customer";
   document.getElementById("landingScreen").style.display = "none";
   document.getElementById("ownerLoginScreen").style.display = "none";
   document.getElementById("appRoot").style.display = "grid";
+  tableLocked = false;
+  if (lockedTable && TABLE_NUMBERS.includes(lockedTable)) {
+    currentTable = lockedTable;
+    tableLocked = true;
+  }
+  document.getElementById("tableInput").value = currentTable;
+  applyTableLockUI();
   applyPortalChrome();
-  location.hash = "customer";
+  location.hash = tableLocked ? `customer/${currentTable}` : "customer";
   switchView("pos");
 }
 
@@ -1659,6 +1894,16 @@ function enterOwnerPortal() {
   switchView("pos");
 }
 
+function enterKitchenPortal() {
+  portalMode = "kitchen";
+  document.getElementById("landingScreen").style.display = "none";
+  document.getElementById("ownerLoginScreen").style.display = "none";
+  document.getElementById("appRoot").style.display = "grid";
+  applyPortalChrome();
+  location.hash = "kitchen";
+  switchView("kitchen");
+}
+
 async function attemptOwnerLogin() {
   const pwInput = document.getElementById("ownerPasswordInput");
   const pw = pwInput.value;
@@ -1667,7 +1912,8 @@ async function attemptOwnerLogin() {
   if (!pw) return;
   const btn = document.getElementById("ownerLoginBtn");
   btn.disabled = true;
-  const res = await api("/owner/login", { method: "POST", body: JSON.stringify({ password: pw }) });
+  const endpoint = pendingLoginRole === "owner" ? "/owner/login" : "/staff/login";
+  const res = await api(endpoint, { method: "POST", body: JSON.stringify({ password: pw }) });
   btn.disabled = false;
   if (!res.ok) {
     errEl.textContent = (res.data && res.data.message) || "Login failed. Please try again.";
@@ -1676,10 +1922,17 @@ async function attemptOwnerLogin() {
     pwInput.focus();
     return;
   }
-  ownerToken = res.data.token;
-  localStorage.setItem("bcOwnerToken", ownerToken);
-  toast("success", "Logged in as owner");
-  enterOwnerPortal();
+  if (pendingLoginRole === "owner") {
+    ownerToken = res.data.token;
+    localStorage.setItem("bcOwnerToken", ownerToken);
+    toast("success", "Logged in as owner");
+    enterOwnerPortal();
+  } else {
+    staffToken = res.data.token;
+    localStorage.setItem("bcStaffToken", staffToken);
+    toast("success", "Logged in to Kitchen");
+    enterKitchenPortal();
+  }
 }
 
 /* ══════════════════════════════════════════════════
@@ -1703,11 +1956,29 @@ function updateServerBadge() {
 
 function populateTableSelect() {
   const sel = document.getElementById("tableInput");
-  sel.innerHTML = Array.from({ length: 10 }, (_, i) => `<option value="T${i+1}">Table ${i+1}</option>`).join("");
+  sel.innerHTML = TABLE_NUMBERS.map(t => `<option value="${t}">Table ${t.slice(1)}</option>`).join("");
   sel.value = currentTable;
+  applyTableLockUI();
+}
+
+function applyTableLockUI() {
+  const sel = document.getElementById("tableInput");
+  const label = document.getElementById("tableInputLabel");
+  const badge = document.getElementById("tableLockedBadge");
+  if (tableLocked && portalMode === "customer") {
+    sel.style.display = "none";
+    label.style.display = "none";
+    badge.style.display = "";
+    badge.textContent = `📍 Table ${currentTable.slice(1)}`;
+  } else {
+    sel.style.display = "";
+    label.style.display = "";
+    badge.style.display = "none";
+  }
 }
 
 function switchTable(tableNo) {
+  if (tableLocked && portalMode === "customer") return; // QR-linked session can't hop tables
   currentTable = tableNo;
   document.getElementById("tableInput").value = tableNo;
   updateServerBadge();
@@ -1722,7 +1993,8 @@ async function refreshTableStrip() {
   strip.innerHTML = res.data.map(t => `
     <div class="table-chip ${t.has_open_tab ? "occupied" : ""}" onclick="switchTable('${t.table_no}')">
       <span class="tc-no">${t.table_no}</span>
-      <span class="tc-amt">${t.has_open_tab ? fmt(t.total) : t.server_name}</span>
+      <span class="tc-amt">${t.has_open_tab ? fmt(t.total) : esc(t.server_name)}</span>
+      ${t.has_open_tab && t.kitchen_status && t.kitchen_status !== "new" ? `<span class="tc-kstatus tc-kstatus-${t.kitchen_status}">${t.kitchen_status}</span>` : ""}
     </div>
   `).join("");
 }
@@ -1745,7 +2017,7 @@ function renderSidebar() {
   menuData.forEach(cat => {
     const btn = document.createElement("button");
     btn.className = "cat-btn" + (cat.id === activeCat ? " active" : "");
-    btn.innerHTML = `<span class="icon">${cat.icon}</span>${cat.name}`;
+    btn.innerHTML = `<span class="icon">${esc(cat.icon)}</span>${esc(cat.name)}`;
     btn.onclick = () => { activeCat = cat.id; searchQ = ""; document.getElementById("searchBox").value = ""; renderSidebar(); renderMenu(); };
     sb.appendChild(btn);
   });
@@ -1770,16 +2042,16 @@ function renderMenu() {
   }
 
   el.innerHTML = cats.map(cat => `
-    <div class="cat-title">${cat.icon}  ${cat.name}</div>
+    <div class="cat-title">${esc(cat.icon)}  ${esc(cat.name)}</div>
     <div class="menu-grid">
       ${cat.items.map(item => `
         <div class="menu-card ${item.available ? "" : "unavailable"}"
              onclick="${item.available ? `addToCart(${item.id})` : ""}">
           <div class="add-dot">＋</div>
           ${iconSvg(item.image_key, "menu-card-icon")}
-          <div class="menu-card-name">${item.name}</div>
-          <div class="menu-card-desc">${item.description || ""}</div>
-          <div class="menu-card-price">${fmt(item.price)}</div>
+          <div class="menu-card-name">${esc(item.name)}</div>
+          <div class="menu-card-desc">${esc(item.description || "")}</div>
+          <div class="menu-card-price">${fmt(item.price)}${item.modifiers && item.modifiers.length ? `<span class="menu-card-custom">customize</span>` : ""}</div>
         </div>
       `).join("")}
     </div>
@@ -1796,22 +2068,34 @@ function renderMenu() {
 function addToCart(id) {
   const item = window._itemMap[id];
   if (!item) return;
+  if (item.modifiers && item.modifiers.length) {
+    openCustomizeModal(id);
+    return;
+  }
+  addToCartWithModifiers(id, []);
+}
+
+function addToCartWithModifiers(id, modifiers) {
+  const item = window._itemMap[id];
+  if (!item) return;
   const cart = cartFor(currentTable);
-  if (cart[id]) cart[id].qty++;
-  else cart[id] = { item, qty: 1 };
+  const key = cartKey(id, modifiers);
+  if (cart[key]) cart[key].qty++;
+  else cart[key] = { item, qty: 1, modifiers };
+  renderCart();
+  if (window.innerWidth <= 860) document.querySelector(".order-panel").classList.add("sheet-open");
+}
+
+function updateQty(key, delta) {
+  const cart = cartFor(currentTable);
+  if (!cart[key]) return;
+  cart[key].qty += delta;
+  if (cart[key].qty <= 0) delete cart[key];
   renderCart();
 }
 
-function updateQty(id, delta) {
-  const cart = cartFor(currentTable);
-  if (!cart[id]) return;
-  cart[id].qty += delta;
-  if (cart[id].qty <= 0) delete cart[id];
-  renderCart();
-}
-
-function removeFromCart(id) {
-  delete cartFor(currentTable)[id];
+function removeFromCart(key) {
+  delete cartFor(currentTable)[key];
   renderCart();
 }
 
@@ -1821,15 +2105,25 @@ function clearCart() {
   renderCart();
 }
 
+let _cartEntryKeys = []; // parallel to the rendered list — lets onclick handlers use a plain safe index instead of an arbitrary (possibly quote-containing) cart key
+
+function entryUnitPrice(e) {
+  const modTotal = (e.modifiers || []).reduce((s, m) => s + (Number(m.delta) || 0), 0);
+  return e.item.price + modTotal;
+}
+
 function renderCart() {
   const cart = cartFor(currentTable);
-  const entries = Object.values(cart);
+  const entries = Object.entries(cart); // [key, {item, qty, modifiers}]
+  _cartEntryKeys = entries.map(([k]) => k);
   const countEl = document.getElementById("itemCount");
   const listEl  = document.getElementById("orderItems");
-  const total   = entries.reduce((s, e) => s + e.item.price * e.qty, 0);
-  const n       = entries.reduce((s, e) => s + e.qty, 0);
+  const total   = entries.reduce((s, [, e]) => s + entryUnitPrice(e) * e.qty, 0);
+  const n       = entries.reduce((s, [, e]) => s + e.qty, 0);
 
   countEl.textContent = `${n} item${n !== 1 ? "s" : ""}`;
+  const handleCount = document.getElementById("itemCountHandle");
+  if (handleCount) handleCount.textContent = `${n} item${n !== 1 ? "s" : ""}`;
 
   if (!entries.length) {
     listEl.innerHTML = `
@@ -1838,18 +2132,24 @@ function renderCart() {
         <div class="empty-text">Tap an item to add it</div>
       </div>`;
   } else {
-    listEl.innerHTML = entries.map(e => `
+    listEl.innerHTML = entries.map(([key, e], idx) => {
+      const modLabel = (e.modifiers || []).map(m => esc(m.option)).join(", ");
+      return `
       <div class="order-item">
-        <div class="oi-name">${iconSvg(e.item.image_key, "oi-icon")}${e.item.name}</div>
-        <div class="oi-price">${fmt(e.item.price * e.qty)}</div>
-        <div class="oi-controls">
-          <button onclick="updateQty(${e.item.id},-1)">−</button>
-          <span class="oi-qty">${e.qty}</span>
-          <button onclick="updateQty(${e.item.id},1)">＋</button>
+        <div class="oi-name">
+          ${iconSvg(e.item.image_key, "oi-icon")}
+          <span>${esc(e.item.name)}${modLabel ? `<div class="oi-mods">${modLabel}</div>` : ""}</span>
         </div>
-        <button class="oi-remove" onclick="removeFromCart(${e.item.id})" title="Remove">✕</button>
+        <div class="oi-price">${fmt(entryUnitPrice(e) * e.qty)}</div>
+        <div class="oi-controls">
+          <button onclick="updateQtyAt(${idx},-1)">−</button>
+          <span class="oi-qty">${e.qty}</span>
+          <button onclick="updateQtyAt(${idx},1)">＋</button>
+        </div>
+        <button class="oi-remove" onclick="removeFromCartAt(${idx})" title="Remove">✕</button>
       </div>
-    `).join("");
+    `;
+    }).join("");
   }
 
   // Totals box only matters for the owner (customer never sees a running
@@ -1869,6 +2169,106 @@ function renderCart() {
   document.getElementById("placeOrderBtn").disabled = entries.length === 0;
 }
 
+// Index-based wrappers so inline onclick attributes never need to embed a
+// cart key directly (a modifier option label is owner-typed free text —
+// safer not to assume it can never contain a quote character).
+function updateQtyAt(idx, delta) { updateQty(_cartEntryKeys[idx], delta); }
+function removeFromCartAt(idx) { removeFromCart(_cartEntryKeys[idx]); }
+
+/* ══════════════════════════════════════════════════
+   ITEM CUSTOMIZE MODAL (size / add-on modifiers)
+══════════════════════════════════════════════════ */
+function openCustomizeModal(id) {
+  const item = window._itemMap[id];
+  if (!item) return;
+  pendingModifierItem = { id, selections: {} }; // { groupName: [optionLabel, ...] }
+  (item.modifiers || []).forEach(g => {
+    if (g.type === "single" && g.required && g.options.length) {
+      pendingModifierItem.selections[g.name] = [g.options[0].label];
+    }
+  });
+  renderCustomizeModal();
+  document.getElementById("customizeModal").classList.add("open");
+}
+
+function closeCustomizeModal() {
+  document.getElementById("customizeModal").classList.remove("open");
+  pendingModifierItem = null;
+}
+
+// groupIdx/optionIdx (plain integers) rather than the label text itself —
+// a modifier label is owner-typed free text and inline onclick attributes
+// are a bad place to embed arbitrary strings safely.
+function toggleModifierOptionAt(groupIdx, optionIdx) {
+  const item = window._itemMap[pendingModifierItem.id];
+  const g = item.modifiers[groupIdx];
+  const o = g.options[optionIdx];
+  const sel = pendingModifierItem.selections;
+  if (g.type === "single") {
+    sel[g.name] = [o.label];
+  } else {
+    const cur = sel[g.name] || [];
+    sel[g.name] = cur.includes(o.label) ? cur.filter(l => l !== o.label) : [...cur, o.label];
+  }
+  renderCustomizeModal();
+}
+
+function renderCustomizeModal() {
+  if (!pendingModifierItem) return;
+  const item = window._itemMap[pendingModifierItem.id];
+  const sel = pendingModifierItem.selections;
+  let deltaTotal = 0;
+
+  const groupsHtml = (item.modifiers || []).map((g, gi) => {
+    const chosen = sel[g.name] || [];
+    const optsHtml = g.options.map((o, oi) => {
+      const isChosen = chosen.includes(o.label);
+      if (isChosen) deltaTotal += Number(o.delta) || 0;
+      return `
+        <button type="button" class="mod-opt ${isChosen ? "chosen" : ""}" onclick="toggleModifierOptionAt(${gi},${oi})">
+          <span>${esc(o.label)}</span>
+          ${o.delta ? `<span class="mod-opt-delta">+${fmt(o.delta)}</span>` : ""}
+        </button>
+      `;
+    }).join("");
+    return `
+      <div class="mod-group">
+        <div class="mod-group-title">${esc(g.name)}${g.required ? ` <span class="mod-required">required</span>` : ""}</div>
+        <div class="mod-opts">${optsHtml}</div>
+      </div>
+    `;
+  }).join("");
+
+  const unitPrice = item.price + deltaTotal;
+  const canConfirm = (item.modifiers || []).every(g => !g.required || (sel[g.name] || []).length > 0);
+
+  document.getElementById("customizeModalCard").innerHTML = `
+    <div class="receipt-header">
+      <div class="receipt-title">${esc(item.name)}</div>
+      <button class="modal-close" onclick="closeCustomizeModal()">✕</button>
+    </div>
+    ${item.description ? `<div style="font-size:.82rem;color:var(--muted);margin-bottom:14px;">${esc(item.description)}</div>` : ""}
+    ${groupsHtml}
+    <div class="totals-row total" style="margin-top:16px;"><span>Price</span><span>${fmt(unitPrice)}</span></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:14px;" ${canConfirm ? "" : "disabled"} onclick="confirmCustomize()">Add to order</button>
+  `;
+}
+
+function confirmCustomize() {
+  if (!pendingModifierItem) return;
+  const item = window._itemMap[pendingModifierItem.id];
+  const sel = pendingModifierItem.selections;
+  const modifiers = [];
+  (item.modifiers || []).forEach(g => {
+    (sel[g.name] || []).forEach(optLabel => {
+      const opt = g.options.find(o => o.label === optLabel);
+      modifiers.push({ group: g.name, option: optLabel, delta: opt ? Number(opt.delta) || 0 : 0 });
+    });
+  });
+  addToCartWithModifiers(pendingModifierItem.id, modifiers);
+  closeCustomizeModal();
+}
+
 /* ══════════════════════════════════════════════════
    PLACE ORDER — send the current round to the table's tab
    (no payment, no total shown to the customer)
@@ -1879,7 +2279,11 @@ async function placeOrder() {
   if (!entries.length) return;
 
   const payload = {
-    items: entries.map(e => ({ item_id: e.item.id, quantity: e.qty, unit_price: e.item.price })),
+    items: entries.map(e => ({
+      item_id: e.item.id,
+      quantity: e.qty,
+      modifiers: (e.modifiers || []).map(m => ({ group: m.group, option: m.option })),
+    })),
   };
   const btn = document.getElementById("placeOrderBtn");
   btn.disabled = true;
@@ -1929,18 +2333,23 @@ function renderBillModal() {
   }
 
   const isOwner = portalMode === "owner";
-  const methods = isOwner
+  let methods = isOwner
     ? [["cash","💵","Cash"],["card","💳","Card"],["upi","📱","UPI"],["online","🌐","Online"]]
     : [["cash","💵","Cash"],["online","🌐","Online"]];
+  if (!RAZORPAY_CONFIGURED) methods = methods.filter(([val]) => val !== "online");
 
   card.innerHTML = `
     <div class="receipt-header">
       <div class="receipt-cafe">Brew &amp; Co.</div>
-      <div class="receipt-addr">Table ${billTable}${serverMap[billTable] ? " · Server: " + serverMap[billTable] : ""}</div>
+      <div class="receipt-addr">Table ${esc(billTable)}${serverMap[billTable] ? " · Server: " + esc(serverMap[billTable]) : ""}</div>
     </div>
     <div class="bill-panel">
       <div class="receipt-items">
-        ${billOrder.items.map(it => `<div class="ri-row"><span>${it.name} × ${it.quantity}</span><span>${fmt(it.line_total)}</span></div>`).join("")}
+        ${billOrder.items.map(it => `
+          <div class="ri-row">
+            <span>${esc(it.name)}${(it.modifiers && it.modifiers.length) ? `<div class="ri-mods">${it.modifiers.map(m => esc(m.option)).join(", ")}</div>` : ""} × ${it.quantity}</span>
+            <span>${fmt(it.line_total)}</span>
+          </div>`).join("")}
       </div>
       <div class="bill-row"><span>Subtotal</span><span>${fmt(billOrder.subtotal)}</span></div>
       <div class="bill-row"><span>GST (5%)</span><span>${fmt(billOrder.tax)}</span></div>
@@ -2040,23 +2449,43 @@ function confirmPay() {
   if (billPaymentMethod === "online") {
     payViaRazorpay();
   } else {
-    settleTab(billPaymentMethod, null);
+    settleTab(billPaymentMethod, {});
   }
 }
 
-function payViaRazorpay() {
+async function payViaRazorpay() {
   if (typeof Razorpay === "undefined") {
     toast("error", "Payment gateway didn't load — check your connection and try again");
     return;
   }
+  if (!RAZORPAY_CONFIGURED) {
+    toast("error", "Online payment isn't set up on this server yet");
+    return;
+  }
+  const payBtn = document.getElementById("confirmPayBtn");
+  payBtn.disabled = true;
+  // Step 1: server mints a Razorpay order for the CURRENT server-computed
+  // total — Checkout can then only ever charge exactly that amount.
+  const orderRes = await api(`/tables/${billTable}/create-payment-order`, { method: "POST" });
+  payBtn.disabled = false;
+  if (!orderRes.ok) {
+    toast("error", (orderRes.data && orderRes.data.message) || "Couldn't start the payment");
+    return;
+  }
+  const { razorpay_order_id, amount, key_id } = orderRes.data;
   const options = {
-    key: RAZORPAY_KEY_ID,
-    amount: Math.round(billOrder.total * 100), // paise
-    currency: "INR",
+    key: key_id,
+    amount, currency: "INR",
+    order_id: razorpay_order_id,
     name: "Brew & Co.",
     description: `${billTable} bill`,
     handler: function (response) {
-      settleTab("online", response.razorpay_payment_id);
+      // Step 2: hand the signed response straight to the server — it
+      // verifies the signature itself before accepting the payment.
+      settleTab("online", {
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature,
+      });
     },
     theme: { color: "#3b1f12" },
     modal: { ondismiss: function () { toast("error", "Payment cancelled"); } },
@@ -2065,13 +2494,14 @@ function payViaRazorpay() {
   rzp.open();
 }
 
-async function settleTab(method, paymentRef) {
+async function settleTab(method, paymentFields) {
   const res = await api(`/tables/${billTable}/pay`, {
     method: "POST",
-    body: JSON.stringify({ payment_method: method, payment_ref: paymentRef }),
+    body: JSON.stringify({ payment_method: method, ...paymentFields }),
   });
   if (!res.ok) { toast("error", (res.data && res.data.error) || "Payment failed"); return; }
   lastPaidOrderId = res.data.id;
+  receiptTokens[res.data.id] = res.data.receipt_token;
   toast("success", `${billTable} paid!`);
   invalidateHistoryCache();
   closeBillModal();
@@ -2085,25 +2515,27 @@ async function settleTab(method, paymentRef) {
 const PAYMENT_LABELS = { cash: "Cash", card: "Card", upi: "UPI", online: "Online" };
 
 async function showReceipt(orderId, offerReview) {
-  const res = await api(`/orders/${orderId}/receipt`);
-  if (!res.ok) return;
+  const token = receiptTokens[orderId];
+  const qs = token ? `?token=${encodeURIComponent(token)}` : "";
+  const res = await api(`/orders/${orderId}/receipt${qs}`);
+  if (!res.ok) { toast("error", "Couldn't load the receipt"); return; }
   const r = res.data.receipt;
 
   document.getElementById("receiptCard").innerHTML = `
     <div class="receipt-header">
-      <div class="receipt-cafe">${r.cafe_name}</div>
-      <div class="receipt-addr">${r.address}</div>
+      <div class="receipt-cafe">${esc(r.cafe_name)}</div>
+      <div class="receipt-addr">${esc(r.address)}</div>
     </div>
     <div class="receipt-body">
       <div class="receipt-meta">
-        Order <b>#${r.order_id}</b> · Table <b>${r.table_no || "—"}</b>
-        ${r.payment_method ? ` · Paid via <b>${PAYMENT_LABELS[r.payment_method] || r.payment_method}</b>` : ""}<br/>
+        Order <b>#${r.order_id}</b> · Table <b>${esc(r.table_no) || "—"}</b>
+        ${r.payment_method ? ` · Paid via <b>${esc(PAYMENT_LABELS[r.payment_method] || r.payment_method)}</b>` : ""}<br/>
         ${fmtDate(r.created_at)}
       </div>
       <div class="receipt-items">
         ${r.items.map(it => `
           <div class="ri-row">
-            <span>${it.name} × ${it.quantity}</span>
+            <span>${esc(it.name)}${(it.modifiers && it.modifiers.length) ? `<div class="ri-mods">${it.modifiers.map(m => esc(m.option)).join(", ")}</div>` : ""} × ${it.quantity}</span>
             <span>${fmt(it.line_total)}</span>
           </div>
         `).join("")}
@@ -2118,7 +2550,7 @@ async function showReceipt(orderId, offerReview) {
           <span>TOTAL</span><span>${fmt(r.total)}</span>
         </div>
       </div>
-      <div class="receipt-thanks">${r.thank_you}</div>
+      <div class="receipt-thanks">${esc(r.thank_you)}</div>
     </div>
     <div class="receipt-actions">
       <button class="btn btn-outline" style="flex:1" onclick="closeReceipt(${offerReview ? "true" : "false"})">Close</button>
@@ -2251,7 +2683,7 @@ function renderReports(data, period) {
         ${data.top_items.length ? data.top_items.map((it, i) => `
           <div class="top-item">
             <div class="top-item-rank">${i+1}</div>
-            <div class="top-item-name">${it.name}</div>
+            <div class="top-item-name">${esc(it.name)}</div>
             <div class="top-item-qty">${it.qty} sold</div>
             <div class="top-item-rev">${fmt(it.revenue)}</div>
           </div>
@@ -2288,13 +2720,13 @@ async function loadReviewsPanel() {
       ${reviews.length ? reviews.map(r => `
         <div class="review-row">
           <div class="review-meta">
-            <span>${r.table_no || "—"}</span>
-            ${r.server_name ? `<span>Server: ${r.server_name}</span>` : ""}
+            <span>${esc(r.table_no) || "—"}</span>
+            ${r.server_name ? `<span>Server: ${esc(r.server_name)}</span>` : ""}
             <span class="review-stars">${r.server_rating ? "Server " + "★".repeat(r.server_rating) : ""}</span>
             <span class="review-stars">${r.cafe_rating ? "Cafe " + "★".repeat(r.cafe_rating) : ""}</span>
             <span>${fmtDate(r.created_at)}</span>
           </div>
-          ${r.comment ? `<div class="review-comment">"${r.comment}"</div>` : ""}
+          ${r.comment ? `<div class="review-comment">"${esc(r.comment)}"</div>` : ""}
         </div>
       `).join("") : `<div style="font-size:.82rem;color:var(--muted)">No reviews yet</div>`}
     </div>
@@ -2324,6 +2756,31 @@ async function loadHistory(page = 1) {
 
 function invalidateHistoryCache() {
   Object.keys(_cache).forEach(k => { if (k.startsWith("history:") || k.startsWith("reports:")) delete _cache[k]; });
+}
+
+async function exportOrderHistoryCsv() {
+  const btn = document.getElementById("exportCsvBtn");
+  btn.disabled = true;
+  try {
+    const qs = selectedDate ? `?date=${selectedDate}` : "";
+    const r = await fetch(`${API}/reports/order-history/export${qs}`, {
+      headers: ownerToken ? { Authorization: `Bearer ${ownerToken}` } : {},
+    });
+    if (!r.ok) { toast("error", "Couldn't export CSV"); return; }
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `brew-and-co-orders-${selectedDate || "all"}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    toast("error", "Couldn't export CSV");
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 function renderHistory(data, page) {
@@ -2470,6 +2927,95 @@ async function loadRequests() {
   refreshRequestsBadge();
 }
 
+/* ══════════════════════════════════════════════════
+   KITCHEN DISPLAY
+══════════════════════════════════════════════════ */
+const KITCHEN_NEXT = { new: "preparing", preparing: "ready", ready: "served" };
+const KITCHEN_LABEL = { new: "New", preparing: "Preparing", ready: "Ready", served: "Served" };
+const KITCHEN_CTA = { new: "Start preparing", preparing: "Mark ready", ready: "Mark served" };
+
+async function loadKitchenQueue() {
+  const el = document.getElementById("kitchenContent");
+  const res = await api("/kitchen/queue");
+  if (!res.ok) { el.innerHTML = `<div class="loader">Could not load the kitchen queue</div>`; return; }
+  const tickets = res.data;
+  updateKitchenBadge(tickets.length);
+
+  if (!tickets.length) {
+    el.innerHTML = `<div style="text-align:center;color:var(--muted);padding:60px 20px;">
+      <div style="font-size:2.4rem;margin-bottom:8px;">✅</div>All caught up — no active tickets.
+    </div>`;
+    return;
+  }
+  el.innerHTML = `<div class="kitchen-grid">${tickets.map(o => {
+    const mins = Math.max(0, Math.floor((Date.now() - new Date(o.created_at)) / 60000));
+    const next = KITCHEN_NEXT[o.kitchen_status];
+    return `
+      <div class="kitchen-card kstatus-${o.kitchen_status}">
+        <div class="kitchen-card-head">
+          <span class="kitchen-table">${esc(o.table_no)}</span>
+          <span class="kitchen-age">${mins}m ago</span>
+        </div>
+        <div class="kitchen-status-pill kstatus-${o.kitchen_status}">${KITCHEN_LABEL[o.kitchen_status]}</div>
+        <div class="kitchen-items">
+          ${o.items.map(it => `
+            <div class="kitchen-item-row">
+              <span class="kitchen-item-qty">${it.quantity}×</span>
+              <span>${esc(it.name)}${(it.modifiers && it.modifiers.length) ? `<div class="ri-mods">${it.modifiers.map(m => esc(m.option)).join(", ")}</div>` : ""}</span>
+            </div>
+          `).join("")}
+        </div>
+        ${next ? `<button class="btn btn-primary kitchen-advance-btn" onclick="advanceKitchenStatus(${o.id},'${next}')">${KITCHEN_CTA[o.kitchen_status]} →</button>` : ""}
+      </div>
+    `;
+  }).join("")}</div>`;
+}
+
+async function advanceKitchenStatus(orderId, newStatus) {
+  const res = await api(`/orders/${orderId}/kitchen-status`, {
+    method: "PATCH",
+    body: JSON.stringify({ kitchen_status: newStatus }),
+  });
+  if (!res.ok) { toast("error", "Couldn't update ticket status"); return; }
+  loadKitchenQueue();
+  if (portalMode === "owner") refreshTableStrip();
+}
+
+function updateKitchenBadge(count) {
+  const badge = document.getElementById("kitchenBadge");
+  if (!badge) return;
+  badge.textContent = count;
+  badge.style.display = count > 0 ? "" : "none";
+}
+
+function startKitchenPoll() {
+  stopKitchenPoll();
+  kitchenPollTimer = setInterval(loadKitchenQueue, 12000);
+}
+function stopKitchenPoll() {
+  if (kitchenPollTimer) clearInterval(kitchenPollTimer);
+  kitchenPollTimer = null;
+}
+
+// Lightweight background poll so the owner sees new discount requests / a
+// changing table strip / kitchen ticket count without having to switch
+// views to trigger a refresh — was previously "only on navigation."
+function startOwnerLivePoll() {
+  stopOwnerLivePoll();
+  ownerLivePollTimer = setInterval(async () => {
+    if (portalMode !== "owner") return;
+    refreshRequestsBadge();
+    const res = await api("/kitchen/queue");
+    if (res.ok) updateKitchenBadge(res.data.length);
+    if (activeView === "pos") refreshTableStrip();
+  }, 15000);
+}
+function stopOwnerLivePoll() {
+  if (ownerLivePollTimer) clearInterval(ownerLivePollTimer);
+  ownerLivePollTimer = null;
+}
+window.advanceKitchenStatus = advanceKitchenStatus;
+
 async function resolveRequest(id, action) {
   let discount_percent;
   if (action === "approve") {
@@ -2517,6 +3063,52 @@ function allIconKeys() {
   return Array.from(document.querySelectorAll("svg symbol")).map(s => s.id.replace("icon-", ""));
 }
 
+/* ── modifiers editor (Add Item form) ─────────────────── */
+let editingModifiers = []; // [{name, type, required, options: [{label, delta}]}]
+
+function renderModifiersEditor() {
+  const wrap = document.getElementById("newItemModifiersEditor");
+  wrap.innerHTML = editingModifiers.map((g, gi) => `
+    <div class="mod-edit-group">
+      <div class="mod-edit-group-row">
+        <input placeholder="Group name (e.g. Size)" value="${escAttr(g.name)}" oninput="updateModGroupField(${gi},'name',this.value)" />
+        <select onchange="updateModGroupField(${gi},'type',this.value)">
+          <option value="single" ${g.type === "single" ? "selected" : ""}>Pick one</option>
+          <option value="multi" ${g.type === "multi" ? "selected" : ""}>Pick any</option>
+        </select>
+        <label class="mod-edit-required"><input type="checkbox" ${g.required ? "checked" : ""} onchange="updateModGroupField(${gi},'required',this.checked)" /> Required</label>
+        <button type="button" class="mgmt-icon-btn danger" onclick="removeModGroup(${gi})">🗑</button>
+      </div>
+      <div class="mod-edit-options">
+        ${g.options.map((o, oi) => `
+          <div class="mod-edit-opt-row">
+            <input placeholder="Option (e.g. Large)" value="${escAttr(o.label)}" oninput="updateModOptionField(${gi},${oi},'label',this.value)" />
+            <input type="number" step="1" placeholder="+₹" value="${o.delta || 0}" oninput="updateModOptionField(${gi},${oi},'delta',this.value)" />
+            <button type="button" class="mgmt-icon-btn danger" onclick="removeModOption(${gi},${oi})">✕</button>
+          </div>
+        `).join("")}
+        <button type="button" class="btn btn-ghost btn-sm" onclick="addModOption(${gi})">+ Option</button>
+      </div>
+    </div>
+  `).join("");
+}
+function addModifierGroup() {
+  editingModifiers.push({ name: "", type: "single", required: false, options: [{ label: "", delta: 0 }] });
+  renderModifiersEditor();
+}
+function removeModGroup(gi) { editingModifiers.splice(gi, 1); renderModifiersEditor(); }
+function updateModGroupField(gi, field, val) { editingModifiers[gi][field] = val; if (field !== "name") renderModifiersEditor(); }
+function addModOption(gi) { editingModifiers[gi].options.push({ label: "", delta: 0 }); renderModifiersEditor(); }
+function removeModOption(gi, oi) { editingModifiers[gi].options.splice(oi, 1); renderModifiersEditor(); }
+function updateModOptionField(gi, oi, field, val) {
+  editingModifiers[gi].options[oi][field] = field === "delta" ? (parseFloat(val) || 0) : val;
+}
+window.updateModGroupField = updateModGroupField;
+window.updateModOptionField = updateModOptionField;
+window.removeModGroup = removeModGroup;
+window.removeModOption = removeModOption;
+window.addModOption = addModOption;
+
 function populateIconPicker(selected) {
   const grid = document.getElementById("newItemIconGrid");
   const chosen = selected || "default";
@@ -2543,8 +3135,8 @@ function renderMgmtTable() {
     ${allItems.map(i => `
       <div class="mgmt-row" data-id="${i.id}">
         ${iconSvg(i.image_key, "mgmt-icon")}
-        <span>${i.name}</span>
-        <span style="color:var(--muted);font-size:.76rem">${i.cat_name}</span>
+        <span>${esc(i.name)}</span>
+        <span style="color:var(--muted);font-size:.76rem">${esc(i.cat_name)}</span>
         <span>${fmt(i.price)}</span>
         <button class="avail-toggle ${i.available ? "on" : ""}" title="${i.available ? "Available" : "Unavailable"}" onclick="toggleAvailable(${i.id}, ${i.available ? 0 : 1})"></button>
         <div class="mgmt-actions">
@@ -2582,9 +3174,18 @@ async function saveNewItem() {
     toast("error", "Enter a name, category, and a valid price");
     return;
   }
+  // drop any half-filled groups/options rather than sending blanks to the server
+  const modifiers = editingModifiers
+    .map(g => ({ ...g, options: g.options.filter(o => o.label.trim()) }))
+    .filter(g => g.name.trim() && g.options.length);
+  if (editingModifiers.some(g => g.name.trim() && !g.options.some(o => o.label.trim()))) {
+    toast("error", "Every option group needs at least one option with a label");
+    return;
+  }
+
   const res = await api("/menu/items", {
     method: "POST",
-    body: JSON.stringify({ name, price, category_id, description, image_key }),
+    body: JSON.stringify({ name, price, category_id, description, image_key, modifiers: modifiers.length ? modifiers : null }),
   });
   if (!res.ok) { toast("error", (res.data && res.data.error) || "Couldn't add item"); return; }
   toast("success", `${name} added to the menu`);
@@ -2592,6 +3193,8 @@ async function saveNewItem() {
   document.getElementById("newItemName").value = "";
   document.getElementById("newItemPrice").value = "";
   document.getElementById("newItemDesc").value = "";
+  editingModifiers = [];
+  renderModifiersEditor();
   await loadMenu();
   populateCategoryDropdown();
   renderMgmtTable();
@@ -2599,17 +3202,34 @@ async function saveNewItem() {
 
 function renderTablesServersGrid() {
   const grid = document.getElementById("tablesServersGrid");
-  grid.innerHTML = Array.from({ length: 10 }, (_, i) => {
-    const t = `T${i+1}`;
+  grid.innerHTML = TABLE_NUMBERS.map(t => {
+    const link = `${location.origin}${location.pathname}#customer/${t}`;
     return `
       <div class="table-server-card">
-        <div class="tsc-no">Table ${i+1}</div>
-        <input value="${serverMap[t] || ""}" placeholder="Server name" id="srv-${t}"
+        <div class="tsc-no">Table ${t.slice(1)}</div>
+        <input value="${escAttr(serverMap[t] || "")}" placeholder="Server name" id="srv-${t}"
                onkeydown="if(event.key==='Enter') saveTableServer('${t}')"
                onblur="saveTableServer('${t}')" />
+        <button type="button" class="btn btn-ghost btn-sm tsc-copy-link" onclick="copyTableLink('${t}', this)">
+          🔗 Copy ordering link
+        </button>
       </div>
     `;
   }).join("");
+}
+
+function copyTableLink(tableNo, btnEl) {
+  const link = `${location.origin}${location.pathname}#customer/${tableNo}`;
+  const done = () => {
+    const original = btnEl.textContent;
+    btnEl.textContent = "✓ Copied";
+    setTimeout(() => { btnEl.textContent = original; }, 1500);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(link).then(done).catch(() => toast("error", "Couldn't copy — copy it manually: " + link));
+  } else {
+    toast("error", "Copy not supported here — link: " + link);
+  }
 }
 
 async function saveTableServer(tableNo) {
@@ -2628,6 +3248,7 @@ async function saveTableServer(tableNo) {
 ══════════════════════════════════════════════════ */
 function switchView(view) {
   if ((view === "reports" || view === "history" || view === "menu" || view === "requests") && portalMode !== "owner") return;
+  if (view === "kitchen" && portalMode !== "owner" && portalMode !== "kitchen") return;
   activeView = view;
 
   const posOnlyEls = [
@@ -2641,6 +3262,7 @@ function switchView(view) {
   document.getElementById("historyView").classList.toggle("active", view === "history");
   document.getElementById("menuMgmtView").classList.toggle("active", view === "menu");
   document.getElementById("requestsView").classList.toggle("active", view === "requests");
+  document.getElementById("kitchenView").classList.toggle("active", view === "kitchen");
 
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
 
@@ -2649,18 +3271,22 @@ function switchView(view) {
   if (view === "history") loadHistory(1);
   if (view === "menu") loadMenuMgmt();
   if (view === "requests") loadRequests();
+  if (view === "kitchen") { loadKitchenQueue(); startKitchenPoll(); } else { stopKitchenPoll(); }
 }
 
 /* ══════════════════════════════════════════════════
    EVENT WIRING
 ══════════════════════════════════════════════════ */
-document.getElementById("pickCustomer").addEventListener("click", enterCustomerPortal);
-document.getElementById("pickOwner").addEventListener("click", showOwnerLogin);
+document.getElementById("pickCustomer").addEventListener("click", () => enterCustomerPortal());
+document.getElementById("pickOwner").addEventListener("click", () => showOwnerLogin("owner"));
+document.getElementById("pickKitchen").addEventListener("click", () => showOwnerLogin("kitchen"));
 document.getElementById("backToLanding").addEventListener("click", showLanding);
 document.getElementById("exitPortalBtn").addEventListener("click", showLanding);
 document.getElementById("logoutBtn").addEventListener("click", () => {
   ownerToken = null;
+  staffToken = null;
   localStorage.removeItem("bcOwnerToken");
+  localStorage.removeItem("bcStaffToken");
   showLanding();
 });
 document.getElementById("ownerLoginBtn").addEventListener("click", attemptOwnerLogin);
@@ -2702,12 +3328,19 @@ document.getElementById("billModal").addEventListener("click", function (e) {
 document.getElementById("reviewModal").addEventListener("click", function (e) {
   if (e.target === this) closeReviewModal();
 });
+document.getElementById("customizeModal").addEventListener("click", function (e) {
+  if (e.target === this) closeCustomizeModal();
+});
 
 document.getElementById("historySortSelect").addEventListener("change", e => {
   histSort = e.target.value;
   loadHistory(1);
 });
 document.getElementById("dateFilterBtn").addEventListener("click", toggleCalendar);
+document.getElementById("exportCsvBtn").addEventListener("click", exportOrderHistoryCsv);
+document.getElementById("orderPanelHandle").addEventListener("click", () => {
+  document.querySelector(".order-panel").classList.toggle("sheet-open");
+});
 document.getElementById("dateClearX").addEventListener("click", clearDateFilter);
 document.getElementById("calPrev").addEventListener("click", () => {
   calViewMonth--; if (calViewMonth < 0) { calViewMonth = 11; calViewYear--; }
@@ -2729,17 +3362,29 @@ document.getElementById("toggleAddItemBtn").addEventListener("click", () => {
   const form = document.getElementById("addItemForm");
   const opening = !form.classList.contains("open");
   form.classList.toggle("open", opening);
-  if (opening) populateIconPicker();
+  if (opening) {
+    populateIconPicker();
+    editingModifiers = [];
+    renderModifiersEditor();
+  }
 });
 document.getElementById("cancelAddItemBtn").addEventListener("click", () => {
   document.getElementById("addItemForm").classList.remove("open");
 });
 document.getElementById("saveNewItemBtn").addEventListener("click", saveNewItem);
+document.getElementById("addModifierGroupBtn").addEventListener("click", addModifierGroup);
 
 // expose globals needed by inline onclick handlers
 window.addToCart          = addToCart;
 window.updateQty          = updateQty;
+window.updateQtyAt        = updateQtyAt;
 window.removeFromCart     = removeFromCart;
+window.removeFromCartAt   = removeFromCartAt;
+window.openCustomizeModal = openCustomizeModal;
+window.closeCustomizeModal = closeCustomizeModal;
+window.toggleModifierOptionAt = toggleModifierOptionAt;
+window.confirmCustomize   = confirmCustomize;
+window.copyTableLink      = copyTableLink;
 window.showReceipt        = showReceipt;
 window.closeReceipt       = closeReceipt;
 window.loadHistory        = loadHistory;
@@ -2758,6 +3403,7 @@ window.saveTableServer    = saveTableServer;
    INIT
 ══════════════════════════════════════════════════ */
 (async function init() {
+  await loadPublicConfig();
   populateTableSelect();
   await loadTables();
   renderCart();
@@ -2771,8 +3417,18 @@ window.saveTableServer    = saveTableServer;
     ownerToken = null;
     localStorage.removeItem("bcOwnerToken");
   }
-  if (hash === "owner") { showOwnerLogin(); return; }
+  if (hash === "owner") { showOwnerLogin("owner"); return; }
+  if (hash === "kitchen") {
+    if (staffToken) { enterKitchenPortal(); return; }
+    showOwnerLogin("kitchen");
+    return;
+  }
   if (hash === "customer") { enterCustomerPortal(); return; }
+  if (hash.startsWith("customer/")) {
+    const t = decodeURIComponent(hash.split("/")[1] || "");
+    enterCustomerPortal(t);
+    return;
+  }
   showLanding();
 })();
 
