@@ -58,13 +58,15 @@ def client():
 
 @pytest.fixture
 def owner_token(client):
-    res = client.post("/api/owner/login", json={"password": "testowner123"})
+    owner_password = os.getenv("OWNER_PASSWORD", "testowner123")
+    res = client.post("/api/owner/login", json={"password": owner_password})
     return res.get_json()["token"]
 
 
 @pytest.fixture
 def staff_token(client):
-    res = client.post("/api/staff/login", json={"password": "teststaff123"})
+    staff_password = os.getenv("STAFF_PASSWORD", "teststaff123")
+    res = client.post("/api/staff/login", json={"password": staff_password})
     return res.get_json()["token"]
 
 
