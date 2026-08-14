@@ -345,18 +345,6 @@ For production, also point `DATABASE_URL` at Neon's **pooled** connection string
 
 ---
 
-## Screenshots
-
-> Frontend runs entirely in-browser. Open `frontend/index.html` after starting the backend.
-
-- **Landing** — Customer / Kitchen / Owner picker
-- **POS View** — category sidebar, menu grid with icons and modifier picker, live cart panel, one-step checkout
-- **Kitchen Display** — live ticket queue with one-tap status advance
-- **Menu Management** — add/toggle/delete items, modifier editor (Owner)
-- **Reports View** — KPI cards, top-items leaderboard, daily bar chart (Owner)
-- **History View** — sortable, calendar-filterable order log with CSV export and delete (Owner)
-
----
 
 ## Author
 
